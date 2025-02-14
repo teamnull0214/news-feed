@@ -3,7 +3,6 @@ package com.example.newsfeed.member.controller;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.LoginRequestDto;
 import com.example.newsfeed.member.entity.Member;
-import com.example.newsfeed.member.repository.MemberRepository;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -20,7 +19,7 @@ public class AuthenticationController {
 
     private final MemberService memberService;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Void> loginMember(
             @RequestBody LoginRequestDto dto,
             HttpServletRequest httpServletRequest
@@ -50,5 +49,14 @@ public class AuthenticationController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new RuntimeException("로그인 실패 - 사용자를 찾지 못했을 경우");
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logoutMember(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

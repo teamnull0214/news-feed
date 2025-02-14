@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,10 @@ public class MemberService {
         }
 
         return findMember;
+    }
+
+    public void deleteMember(SessionMemberDto dto) {
+        Member findMember = findMemberByEmailOrElseThrow(dto.getEmail());
     }
 
     private Member findMemberByEmailOrElseThrow(String email) {

@@ -29,15 +29,16 @@ public class PostService {
 
         // 게시물 생성
         Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
+        Post savedPost = postRepository.save(post);
 
         log.info("게시물 등록 성공");
 
         return new PostResponseDto(
-                post.getId(),
+                savedPost.getId(),
                 member.getNickname(),
-                post.getImage(),
-                post.getCreatedAt(),
-                post.getModifiedAt()
+                savedPost.getImage(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
                 );
     }
 }

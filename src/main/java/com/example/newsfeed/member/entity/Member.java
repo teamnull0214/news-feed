@@ -43,4 +43,12 @@ public class Member extends BaseDateTime {
         this.email = email;
         this.password = password;
     }
+
+    public void profileUpdate(String username, String nickname, String info, String mbti){
+        this.username = username;
+        this.nickname = nickname;
+        this.info = info;
+        this.mbti = mbti;
+    }
+
 }

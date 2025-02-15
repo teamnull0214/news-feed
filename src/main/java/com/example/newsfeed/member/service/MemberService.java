@@ -1,6 +1,9 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +53,34 @@ public class MemberService {
                 savedMember.getNickname(),
                 savedMember.getEmail(),
                 savedMember.getCreatedAt()
+        );
+    }
+
+    public UpdateMemberProfileResponseDto profileUpdate(Long membersId, UpdateMemberProfileRequestDto requestDto) {
+
+        Member member = memberRepository.findMemberById(membersId).orElseThrow(
+                () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
+        );
+
+        // 프로필 수정
+        member.profileUpdate(
+                requestDto.getName(),
+                requestDto.getNickname(),
+                requestDto.getInfo(),
+                requestDto.getMbti()
+        );
+
+        log.info("프로필 수정 성공");
+
+        return new UpdateMemberProfileResponseDto(
+                member.getId(),
+                member.getUsername(),
+                member.getNickname(),
+                member.getEmail(),
+                member.getInfo(),
+                member.getMbti(),
+                member.getCreatedAt(),
+                member.getModifiedAt()
         );
     }
 }

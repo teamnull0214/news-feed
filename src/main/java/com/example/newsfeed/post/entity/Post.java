@@ -27,6 +27,12 @@ public class Post extends BaseDateTime {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public Post(String image, String contents, Member member) {
+        this.image = image;
+        this.contents = contents;
+        this.member = member;
+    }
+
     public Post() {
 
     }

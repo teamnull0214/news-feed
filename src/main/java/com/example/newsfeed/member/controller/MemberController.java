@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     // (본인)유저 프로필 수정
-    @PatchMapping("/members/{membersId}/profile")
+    @PatchMapping("/{membersId}/profile")
     public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
             @PathVariable Long membersId,
             @Valid @RequestBody UpdateMemberProfileRequestDto requestDto

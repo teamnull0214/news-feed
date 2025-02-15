@@ -41,7 +41,7 @@ public class MemberController {
             @PathVariable Long membersId,
             @Valid @RequestBody UpdateMemberProfileRequestDto requestDto
     ){
-        log.info("유저 프로필 수정");
+        log.info("유저 프로필 수정 API 호출");
         return ResponseEntity.ok(memberService.profileUpdate(membersId,requestDto));
     }
 }

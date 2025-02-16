@@ -3,6 +3,7 @@ package com.example.newsfeed.member.controller;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.deleteRequestDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,42 +31,31 @@ public class MemberController {
             @Valid @RequestBody MemberRequestDto dto
     ) {
         log.info("회원가입 API 호출");
-        return new ResponseEntity<>(memberService.createMember(
-                dto.getName(),
-                dto.getNickname(),
-                dto.getEmail(),
-                dto.getPassword(),
-                dto.getPasswordCheck()
-        ), HttpStatus.CREATED);
+        return new ResponseEntity<>(memberService.createMember(dto), HttpStatus.CREATED);
     }
 
     /*유저의 비밀번호 업데이트*/
-    @PatchMapping("/members/{memberId}/password")
+    @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(
-            @PathVariable Long memberId,
-            @Valid @RequestBody updatePasswordRequestDto dto
+            @Valid @RequestBody updatePasswordRequestDto dto,
+            HttpServletRequest httpServletRequest
     ) {
-        /* todo: 로그인 기능 merge 후 세션 추가*/
 
-        memberService.updatePassword(
-                memberId,
-                dto.getOldPassword(),
-                dto.getNewPassword(),
-                dto.getNewPasswordCheck()
-        );
+        HttpSession session = httpServletRequest.getSession();
+        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
+        memberService.updatePassword(sessionMemberDto, dto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteMember(
-            @RequestBody Map<String, String> dto,
+            @Valid @RequestBody deleteRequestDto dto,
             HttpServletRequest httpServletRequest
     ) {
         HttpSession session = httpServletRequest.getSession(false);
         SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
-        memberService.deleteMember(sessionMemberDto, dto.get("password"));
+        memberService.deleteMember(sessionMemberDto, dto.getPassword());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

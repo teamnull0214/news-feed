@@ -44,6 +44,10 @@ public class Member extends BaseDateTime {
         this.password = password;
     }
 
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
     public void updateIsDelete(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }

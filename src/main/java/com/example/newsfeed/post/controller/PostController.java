@@ -33,4 +33,20 @@ public class PostController {
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK); // status 200
     }
 
+
+    /*
+    feat/post-read 브랜치
+    postId를 통해 특정 게시물을 조회하는 메서드
+    */
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDto> findPostById(@PathVariable Long postId){
+
+        PostResponseDto postResponseDto = postService.findById(postId);
+
+        // 성공시 status 200 실패시 stauts 404 PostRepository.java ->  findByIdOrElseThrow 메서드 참고
+        return new ResponseEntity<>(postResponseDto, HttpStatus.OK); // status 200
+    }
+
+
+
 }

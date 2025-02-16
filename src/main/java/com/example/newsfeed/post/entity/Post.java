@@ -20,16 +20,16 @@ public class Post extends BaseDateTime {
     private String image;
 
     @Column(nullable = false)
-    private String contents;
+    private String content;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Post(String image, String contents, Member member) {
+    public Post(String image, String content, Member member) {
         this.image = image;
-        this.contents = contents;
+        this.content = content;
         this.member = member;
     }
 

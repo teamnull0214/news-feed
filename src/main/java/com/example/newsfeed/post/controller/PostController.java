@@ -1,5 +1,6 @@
 package com.example.newsfeed.post.controller;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.dto.PostResponseDto;
 import com.example.newsfeed.post.service.PostService;
@@ -16,10 +17,12 @@ public class PostController {
 
     @PostMapping("/members/{memberId}/posts")
     public ResponseEntity<PostResponseDto> createPost(
-            @PathVariable Long memberId,
+            @SessionAttribute(name = "member") SessionMemberDto session,
             @RequestBody PostRequestDto requestDto
-    ){
+    ) {
+
         log.info("게시물 생성 API 호출");
-        return ResponseEntity.ok(postService.createPost(memberId, requestDto));
+        return ResponseEntity.ok(postService.createPost(session, requestDto));
     }
+
 }

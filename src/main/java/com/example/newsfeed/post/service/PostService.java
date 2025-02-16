@@ -1,6 +1,7 @@
 package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.entity.BaseDateTime;
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import com.example.newsfeed.post.dto.PostRequestDto;
@@ -23,25 +24,37 @@ public class PostService extends BaseDateTime {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public PostResponseDto createPost(Long memberId, PostRequestDto requestDto) {
-
-        // 유저 확인
-        Member member = memberRepository.findMemberById(memberId).orElseThrow(
-                () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
-        );
-
-        // 게시물 생성
-        Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
+    public PostResponseDto createPost(SessionMemberDto session, PostRequestDto requestDto) {
+        Member member = Member.fromMemberId(session.getId());
+        Post post = new Post(requestDto.getImage(), requestDto.getContent(), member);
         Post savedPost = postRepository.save(post);
 
-        log.info("게시물 등록 성공");
-
+        log.info("게시물 생성 성공");
         return new PostResponseDto(
                 savedPost.getId(),
-                member.getNickname(),
+                member.getId(),
+                savedPost.getContent(),
                 savedPost.getImage(),
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                savedPost.getCreatedAt(),
+                savedPost.getModifiedAt()
         );
+
+
+//        // 유저 확인
+//        Member member = Member.fromMemberId(memberId);
+//
+//        // 게시물 생성
+//        Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
+//        Post savedPost = postRepository.save(post);
+//
+//        log.info("게시물 등록 성공");
+//
+//        return new PostResponseDto(
+//                savedPost.getId(),
+//                member.getNickname(),
+//                savedPost.getImage(),
+//                LocalDateTime.now(),
+//                LocalDateTime.now()
+//        );
     }
 }

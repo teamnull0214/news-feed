@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class PostRequestDto {
-    private final String contents;
+    private final String content;
     private final String image;
 
-    public PostRequestDto(String contents, String image) {
-        this.contents = contents;
+    public PostRequestDto(String content, String image) {
+        this.content = content;
         this.image = image;
     }
 }

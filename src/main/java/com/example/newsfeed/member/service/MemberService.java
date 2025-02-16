@@ -2,6 +2,9 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.updatePasswordRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,9 +57,10 @@ public class MemberService {
         );
     }
 
-    public UpdateMemberProfileResponseDto profileUpdate(Long membersId, UpdateMemberProfileRequestDto requestDto) {
+    @Transactional
+    public UpdateMemberProfileResponseDto profileUpdate(Long memberId, UpdateMemberProfileRequestDto requestDto) {
 
-        Member member = memberRepository.findMemberById(membersId).orElseThrow(
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(
                 () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
         );
 

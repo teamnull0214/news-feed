@@ -43,4 +43,8 @@ public class Member extends BaseDateTime {
         this.email = email;
         this.password = password;
     }
+
+    public void updateIsDelete(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

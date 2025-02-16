@@ -1,16 +1,13 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -86,4 +83,22 @@ public class MemberService {
             throw new RuntimeException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
         }
     }
+
+    public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
+        Member findMember = findMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
+
+        if (findMember.getPassword().equals(password)) {
+            throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
+        }
+
+        findMember.updateIsDelete(true);
+    }
+
+    private Member findMemberByEmailOrElseThrow(String email) {
+        return memberRepository.findMemberByEmail(email).orElseThrow(() ->
+                new RuntimeException("찾아지는 이메일 유저가 없음")
+        );
+    }
+
+
 }

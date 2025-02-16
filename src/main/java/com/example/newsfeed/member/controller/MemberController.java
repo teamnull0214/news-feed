@@ -1,10 +1,12 @@
 package com.example.newsfeed.member.controller;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -48,6 +53,19 @@ public class MemberController {
                 dto.getNewPassword(),
                 dto.getNewPasswordCheck()
         );
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> deleteMember(
+            @RequestBody Map<String, String> dto,
+            HttpServletRequest httpServletRequest
+    ) {
+        HttpSession session = httpServletRequest.getSession(false);
+        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
+        memberService.deleteMember(sessionMemberDto, dto.get("password"));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

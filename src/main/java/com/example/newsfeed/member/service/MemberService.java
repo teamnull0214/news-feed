@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
@@ -52,4 +53,22 @@ public class MemberService {
                 savedMember.getCreatedAt()
         );
     }
+
+    public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
+        Member findMember = findMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
+
+        if (findMember.getPassword().equals(password)) {
+            throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
+        }
+
+        findMember.updateIsDelete(true);
+    }
+
+    private Member findMemberByEmailOrElseThrow(String email) {
+        return memberRepository.findMemberByEmail(email).orElseThrow(() ->
+                new RuntimeException("찾아지는 이메일 유저가 없음")
+        );
+    }
+
+
 }

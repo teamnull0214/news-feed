@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PostResponseDto {
+public class PostCreateResponseDto {
     private final Long id;
     private final Long memberId;
     private final String nickname;
@@ -13,7 +13,7 @@ public class PostResponseDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public PostResponseDto(Long id, Long memberId, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public PostCreateResponseDto(Long id, Long memberId, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.memberId = memberId;
         this.nickname = nickname;

@@ -13,16 +13,28 @@ public class PostController {
 
     private final PostService postService;
 
-    @PutMapping("/posts/{id}")
-    public ResponseEntity<PostResponseDto> update(
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updateImageAndContent(
             @PathVariable Long id,
-            RequestBody PostRequestDto dto
+            @valid @RequestBody PostRequestDto dto
+            HttpServletRequest httpServletRequest
     ) {
-        return ResponseEntity.ok(postService.update(id, dto));
+        Long memberId = getMemberIdBySession(httpServletRequest);
+        PostResponseDto postResponseDto = postService.updateImageAndContent(id, memberId, dto);
+        return ResponseEntity.ok(postService.updateImageAndContent(id, memberId, dto));
     }
 
-    @DeleteMapping("/posts/{id}")
-    public void delete(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public void delete(
+            @PathVariable Long id,
+            HttpServletRequest httpServletRequest
+            ) {
+        Long userId = getMemberIdBySession(httpServletRequest);
         postService.deleteById(id);
+    }
+
+    private Long getMemberIdBySession(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession(false);
+        return (Long) session.getAttribute("memberId");
     }
 }

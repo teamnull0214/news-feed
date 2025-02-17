@@ -37,7 +37,7 @@ public class Post extends BaseDateTime {
     public Post() {
 
     }
-    public void update(String image, String content) {
+    public void updateImageAndContent(String image, String content) {
         this.image = image;
         this.contents = content;
     }

@@ -20,5 +20,6 @@ public class PostCreateResponseDto {
         this.image = image;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+
     }
 }

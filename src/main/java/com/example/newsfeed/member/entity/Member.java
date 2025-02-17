@@ -54,8 +54,9 @@ public class Member extends BaseDateTime {
         this.password = newPassword;
     }
 
-    public void updateIsDelete(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void updateIsDeleteTrueAndNickname() {
+        this.nickname = "삭제된 유저입니다";
+        this.isDeleted = true;
     }
 
     public void profileUpdate(String username, String nickname, String info, String mbti){

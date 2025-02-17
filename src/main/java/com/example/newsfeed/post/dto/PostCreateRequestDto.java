@@ -3,11 +3,11 @@ package com.example.newsfeed.post.dto;
 import lombok.Getter;
 
 @Getter
-public class PostRequestDto {
+public class PostCreateRequestDto {
     private final String contents;
     private final String image;
 
-    public PostRequestDto(String contents, String image) {
+    public PostCreateRequestDto(String contents, String image) {
         this.contents = contents;
         this.image = image;
     }

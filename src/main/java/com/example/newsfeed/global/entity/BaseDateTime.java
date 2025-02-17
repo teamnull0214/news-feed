@@ -19,5 +19,5 @@ public class BaseDateTime {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private LocalDateTime modifiedAt;
 }

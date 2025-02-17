@@ -59,17 +59,27 @@ public class MemberService {
 
     @Transactional
     public UpdateMemberProfileResponseDto profileUpdate(Long memberId, UpdateMemberProfileRequestDto requestDto) {
-
         Member member = memberRepository.findMemberById(memberId).orElseThrow(
                 () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
         );
 
+        // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문
+        // info, mbti 요청값이 없으면 이전에 있던 info,mbti 값 그대로 출력
+        if(requestDto.getInfo() != null){
+            member.updateInfo(requestDto.getInfo());
+        }
+        if(requestDto.getMbti() != null){
+            member.updateMbti(requestDto.getMbti());
+        }
+        // 프로필 수정 저장하는 쿼리
+        Member savedMember = memberRepository.save(member);
+
         // 프로필 수정
         member.profileUpdate(
-                requestDto.getName(),
-                requestDto.getNickname(),
-                requestDto.getInfo(),
-                requestDto.getMbti()
+                savedMember.getUsername(),
+                savedMember.getNickname(),
+                savedMember.getInfo(),
+                savedMember.getMbti()
         );
 
         log.info("프로필 수정 성공");

@@ -37,14 +37,15 @@ public class MemberService {
             throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
         }
 
-        Member findMember = findMemberByEmailOrElseThrow(email);
+        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(email);
 
-        /*todo: jpql로 수정 예정*/
-        if(findMember.isDeleted()) {
-            throw new RuntimeException("탈퇴한 유저입니다.");
-        }
+        if (memberByEmail.isPresent()) {
+            Member findMember = memberByEmail.get();
 
-        if (findMember.getEmail().equals(email)) {
+            if(findMember.isDeleted()) {
+                throw new RuntimeException("탈퇴한 유저입니다.");
+            }
+
             throw new RuntimeException("이미 존재하는 회원입니다.");
         }
 

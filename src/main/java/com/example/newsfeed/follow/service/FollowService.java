@@ -22,7 +22,7 @@ public class FollowService {
             throw new RuntimeException("본인을 팔로우 할 수 없다.");
         }
 
-        log.info("followerId -> followingId = {} -> {}", followerId,followingId);
+        // 팔로워와 팔로잉을 조회
         Member followerMember = memberService.findMemberByIdOrElseThrow(followerId);
         Member findFollowing = memberService.findMemberByIdOrElseThrow(followingId);
 

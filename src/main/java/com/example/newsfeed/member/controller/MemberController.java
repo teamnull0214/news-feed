@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
@@ -51,6 +52,7 @@ public class MemberController {
     }
 
     /*유저의 비밀번호 업데이트*/
+    @LoginRequired
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(
             @Valid @RequestBody updatePasswordRequestDto dto,
@@ -64,6 +66,7 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @LoginRequired
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteMember(
             @Valid @RequestBody deleteRequestDto dto,

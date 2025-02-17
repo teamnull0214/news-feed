@@ -37,15 +37,19 @@ public class MemberService {
             throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
         }
 
-        /*이미 존재하는 회원인 경우*/
-        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(email);
-        if (memberByEmail.isPresent()) {
+        Member findMember = findMemberByEmailOrElseThrow(email);
+
+        /*todo: jpql로 수정 예정*/
+        if(findMember.isDeleted()) {
+            throw new RuntimeException("탈퇴한 유저입니다.");
+        }
+
+        if (findMember.getEmail().equals(email)) {
             throw new RuntimeException("이미 존재하는 회원입니다.");
         }
 
         /*member 객체 생성 및 비밀번호 암호화*/
-        String passwordEncode = passwordEncoder.encode(password);
-        Member member = new Member(name, nickName, email, passwordEncode);
+        Member member = new Member(name, nickName, email, passwordEncoder.encode(password));
         Member savedMember = memberRepository.save(member);
 
         log.info("유저 회원가입 성공");
@@ -137,9 +141,10 @@ public class MemberService {
         );
     }
 
-
     public Member loginMember(String email, String password) {
+
         Member findMember = findMemberByEmailOrElseThrow(email);
+
         if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 불일치");
         }

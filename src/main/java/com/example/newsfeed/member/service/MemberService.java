@@ -126,7 +126,9 @@ public class MemberService {
             throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
         }
 
-        findMember.updateIsDelete(true);
+        // hard delete 대신 isDelete 를 true 하는 방식으로 soft delete
+        // 삭제된 유저 조회시 "삭제된 유저입니다" 라고 출력될 수 있도록 nickname 필드를 더티체킹
+        findMember.updateIsDeleteTrueAndNickname();
     }
 
     private Member findMemberByEmailOrElseThrow(String email) {

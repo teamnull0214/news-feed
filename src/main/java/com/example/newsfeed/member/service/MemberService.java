@@ -83,8 +83,8 @@ public class MemberService {
 
         // 프로필 수정
         member.profileUpdate(
-                savedMember.getUsername(),
-                savedMember.getNickname(),
+                requestDto.getUsername(),
+                requestDto.getNickname(),
                 savedMember.getInfo(),
                 savedMember.getMbti()
         );

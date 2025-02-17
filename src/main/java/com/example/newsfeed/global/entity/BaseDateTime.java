@@ -19,5 +19,5 @@ public class BaseDateTime {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt; // updateAt에서 변수명 수정 중요
 }

@@ -36,12 +36,12 @@ public class MemberController {
     }
 
     // (본인)유저 프로필 수정
-    @PatchMapping("/{membersId}/profile")
+    @PatchMapping("/{memberId}/profile")
     public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
-            @PathVariable Long membersId,
+            @PathVariable Long memberId,
             @Valid @RequestBody UpdateMemberProfileRequestDto requestDto
     ){
         log.info("유저 프로필 수정");
-        return ResponseEntity.ok(memberService.profileUpdate(membersId,requestDto));
+        return ResponseEntity.ok(memberService.profileUpdate(memberId,requestDto));
     }
 }

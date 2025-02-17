@@ -38,23 +38,5 @@ public class PostService extends BaseDateTime {
                 savedPost.getCreatedAt(),
                 savedPost.getModifiedAt()
         );
-
-
-//        // 유저 확인
-//        Member member = Member.fromMemberId(memberId);
-//
-//        // 게시물 생성
-//        Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
-//        Post savedPost = postRepository.save(post);
-//
-//        log.info("게시물 등록 성공");
-//
-//        return new PostResponseDto(
-//                savedPost.getId(),
-//                member.getNickname(),
-//                savedPost.getImage(),
-//                LocalDateTime.now(),
-//                LocalDateTime.now()
-//        );
     }
 }

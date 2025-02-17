@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public MemberResponseDto createMember(
@@ -29,22 +31,26 @@ public class MemberService {
             String password,
             String passwordCheck
     ) {
+
         /*password와 passwordCheck가 일치하지 않는 경우*/
         if (!password.equals(passwordCheck) ) {
             throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
         }
 
-        /*이미 존재하는 회원인 경우*/
-        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(email);
-        if (memberByEmail.isPresent()) {
+        Member findMember = findMemberByEmailOrElseThrow(email);
+
+        /*todo: jpql로 수정 예정*/
+        if(findMember.isDeleted()) {
+            throw new RuntimeException("탈퇴한 유저입니다.");
+        }
+
+        if (findMember.getEmail().equals(email)) {
             throw new RuntimeException("이미 존재하는 회원입니다.");
         }
 
-        /*member 객체 생성*/
-        Member member = new Member(name, nickName, email, password);
+        /*member 객체 생성 및 비밀번호 암호화*/
+        Member member = new Member(name, nickName, email, passwordEncoder.encode(password));
         Member savedMember = memberRepository.save(member);
-
-        /*todo: 비밀번호 암호화 추가하기*/
 
         log.info("유저 회원가입 성공");
 
@@ -92,12 +98,12 @@ public class MemberService {
         Member findMember = findMemberByIdOrElseThrow(sessionMemberDto.getId());
 
         /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
-        if(!findMember.getPassword().equals(dto.getOldPassword())) {
+        if(!passwordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
         /*현재 비밀번호와 동일한 비밀번호로 수정하는 경우*/
-        if(findMember.getPassword().equals(dto.getNewPassword())) {
+        if(dto.getOldPassword().equals(dto.getNewPassword())) {
             throw new RuntimeException("새 비밀번호는 기존 비밀번호와 달라야 합니다.");
         }
 
@@ -106,8 +112,8 @@ public class MemberService {
             throw new RuntimeException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
         }
 
-        /*비밀번호 업데이트*/
-        findMember.updatePassword(dto.getNewPassword());
+        /*비밀번호 암호화 후 업데이트*/
+        findMember.updatePassword(passwordEncoder.encode(dto.getNewPassword()));
 
         log.info("비밀번호 수정 성공");
     }
@@ -116,7 +122,7 @@ public class MemberService {
     public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
         Member findMember = findMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
-        if (findMember.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
         }
 
@@ -137,10 +143,11 @@ public class MemberService {
         );
     }
 
-
     public Member loginMember(String email, String password) {
+
         Member findMember = findMemberByEmailOrElseThrow(email);
-        if (!findMember.getPassword().equals(password)) {
+
+        if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 불일치");
         }
 

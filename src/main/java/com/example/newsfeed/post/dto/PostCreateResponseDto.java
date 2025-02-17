@@ -5,19 +5,19 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PostResponseDto {
+public class PostCreateResponseDto {
     private final Long id;
-    private final Long memberId;
     private final String nickname;
     private final String image;
+    private final String contents;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public PostResponseDto(Long id, Long memberId, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public PostCreateResponseDto(Long id, String nickname, String image, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
-        this.memberId = memberId;
         this.nickname = nickname;
         this.image = image;
+        this.contents = contents;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }

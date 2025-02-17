@@ -37,6 +37,12 @@ public class Member extends BaseDateTime {
 
     }
 
+    public Member(String username, String nickname, String email) {
+        this.username = username;
+        this.nickname = nickname;
+        this.email = email;
+    }
+
     public Member(String username, String nickname, String email, String password) {
         this.username = username;
         this.nickname = nickname;
@@ -51,4 +57,20 @@ public class Member extends BaseDateTime {
     public void updateIsDelete(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    public void profileUpdate(String username, String nickname, String info, String mbti){
+        this.username = username;
+        this.nickname = nickname;
+        this.info = info;
+        this.mbti = mbti;
+    }
+
+    private Member(Long id){
+        this.id = id;
+    }
+
+    public static Member fromMemberId(Long id){
+        return new Member(id);
+    }
+
 }

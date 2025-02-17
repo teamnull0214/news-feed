@@ -25,7 +25,8 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping("/posts")
+    // 게시물 생성 (로그인 상태)
+    @PostMapping
     public ResponseEntity<PostCreateResponseDto> createPost(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @Valid @RequestBody PostCreateRequestDto requestDto

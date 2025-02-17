@@ -138,7 +138,7 @@ public class MemberService {
         );
     }
 
-    private Member findMemberByIdOrElseThrow(Long memebrId) {
+    public Member findMemberByIdOrElseThrow(Long memebrId) {
         return memberRepository.findMemberById(memebrId).orElseThrow(() ->
                 new RuntimeException("찾아지는 아이디 유저가 없음")
         );

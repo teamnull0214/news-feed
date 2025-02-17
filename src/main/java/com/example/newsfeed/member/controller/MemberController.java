@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
@@ -36,6 +37,8 @@ public class MemberController {
     }
 
     // (본인)유저 프로필 수정
+    // @LoginRequired 가 있을 때만 로그인 유저인지 확인함
+    @LoginRequired  // 커스텀 어노테이션
     @PatchMapping("/{memberId}/profile")
     public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
             @PathVariable Long memberId,

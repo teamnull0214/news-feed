@@ -26,7 +26,7 @@ public class PostService extends BaseDateTime {
     @Transactional
     public PostResponseDto createPost(SessionMemberDto session, PostRequestDto requestDto) {
         Member member = Member.fromMemberId(session.getId());
-        Post post = new Post(requestDto.getImage(), requestDto.getContent(), member);
+        Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
         Post savedPost = postRepository.save(post);
 
         log.info("게시물 생성 성공");

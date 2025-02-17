@@ -61,7 +61,7 @@ public class PostController {
 
     //feat/post-updateDelete
     // 포스트 업데이트
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<PostResponseDto> updateImageAndContents(
             @PathVariable Long id,
             @valid @RequestBody PostRequestDto dto

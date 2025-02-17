@@ -27,7 +27,7 @@ public class PostResponseDto {
         this.id = id;
         this.nickname = nickname;
         this.image = image;
-        this.content;
+        this.contents = contents;
         }
     }
     */

@@ -63,7 +63,7 @@ public class PostService {
         //feat/post-updateDelete
         // 업데이트
         @Transactional
-        public PostResponseDto  updateImageAndContent(Long id, PostRequestDto dto) {
+        public PostResponseDto  updateImageAndContent(Long id, Long memberId, PostRequestDto dto) {
             Post post = postRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 ID 찾을 수 없음")
             );
@@ -71,7 +71,7 @@ public class PostService {
 
         Users findPostMembers = findPost.getMember();
 
-        if (!Objects.equals(userId, findPostMembers.grtId())) {
+        if (!Objects.equals(memberId, findPostMembers.grtId())) {
             throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음")
         }
         post.updateImageAndContent(dto.getImage(), dto.getContents());

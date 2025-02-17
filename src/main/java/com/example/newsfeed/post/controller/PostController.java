@@ -1,8 +1,8 @@
 package com.example.newsfeed.post.controller;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.post.dto.PostRequestDto;
-import com.example.newsfeed.post.dto.PostResponseDto;
+import com.example.newsfeed.post.dto.PostCreateRequestDto;
+import com.example.newsfeed.post.dto.PostCreateResponseDto;
 import com.example.newsfeed.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +16,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/members/{memberId}/posts")
-    public ResponseEntity<PostResponseDto> createPost(
+    public ResponseEntity<PostCreateResponseDto> createPost(
             @SessionAttribute(name = "member") SessionMemberDto session,
-            @RequestBody PostRequestDto requestDto
+            @RequestBody PostCreateRequestDto requestDto
     ) {
 
         log.info("게시물 생성 API 호출");

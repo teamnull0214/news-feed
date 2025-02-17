@@ -1,22 +1,16 @@
 package com.example.newsfeed.member.controller;
 
-import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -41,16 +35,13 @@ public class MemberController {
         ), HttpStatus.CREATED);
     }
 
-
-    @PostMapping("/delete")
-    public ResponseEntity<Void> deleteMember(
-            @RequestBody Map<String, String> dto,
-            HttpServletRequest httpServletRequest
-    ) {
-        HttpSession session = httpServletRequest.getSession(false);
-        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
-        memberService.deleteMember(sessionMemberDto, dto.get("password"));
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    // (본인)유저 프로필 수정
+    @PatchMapping("/{memberId}/profile")
+    public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
+            @PathVariable Long memberId,
+            @Valid @RequestBody UpdateMemberProfileRequestDto requestDto
+    ){
+        log.info("유저 프로필 수정");
+        return ResponseEntity.ok(memberService.profileUpdate(memberId,requestDto));
     }
 }

@@ -18,4 +18,5 @@ public class SessionMemberDto {
     private String email;
 
 
+
 }

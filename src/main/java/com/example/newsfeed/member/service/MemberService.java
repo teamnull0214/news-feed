@@ -2,6 +2,9 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.updatePasswordRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +57,62 @@ public class MemberService {
         );
     }
 
+    @Transactional
+    public UpdateMemberProfileResponseDto profileUpdate(Long memberId, UpdateMemberProfileRequestDto requestDto) {
+
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(
+                () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
+        );
+
+        // 프로필 수정
+        member.profileUpdate(
+                requestDto.getName(),
+                requestDto.getNickname(),
+                requestDto.getInfo(),
+                requestDto.getMbti()
+        );
+
+        log.info("프로필 수정 성공");
+
+        return new UpdateMemberProfileResponseDto(
+                member.getId(),
+                member.getUsername(),
+                member.getNickname(),
+                member.getEmail(),
+                member.getInfo(),
+                member.getMbti(),
+                member.getCreatedAt(),
+                member.getModifiedAt()
+        );
+    }
+
+    @Transactional
+    public void updatePassword(SessionMemberDto sessionMemberDto, updatePasswordRequestDto dto) {
+
+        Member findMember = findMemberByIdOrElseThrow(sessionMemberDto.getId());
+
+        /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
+        if(!findMember.getPassword().equals(dto.getOldPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        /*현재 비밀번호와 동일한 비밀번호로 수정하는 경우*/
+        if(findMember.getPassword().equals(dto.getNewPassword())) {
+            throw new RuntimeException("새 비밀번호는 기존 비밀번호와 달라야 합니다.");
+        }
+
+        /*새 비밀번호와 새 비밀번호 확인이 일치하지 않은 경우*/
+        if(!dto.getNewPassword().equals(dto.getNewPasswordCheck())) {
+            throw new RuntimeException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+
+        /*비밀번호 업데이트*/
+        findMember.updatePassword(dto.getNewPassword());
+
+        log.info("비밀번호 수정 성공");
+    }
+
+    @Transactional
     public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
         Member findMember = findMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
@@ -70,5 +129,19 @@ public class MemberService {
         );
     }
 
+    private Member findMemberByIdOrElseThrow(Long memebrId) {
+        return memberRepository.findMemberById(memebrId).orElseThrow(() ->
+                new RuntimeException("찾아지는 아이디 유저가 없음")
+        );
+    }
 
+
+    public Member loginMember(String email, String password) {
+        Member findMember = findMemberByEmailOrElseThrow(email);
+        if (!findMember.getPassword().equals(password)) {
+            throw new RuntimeException("비밀번호가 불일치");
+        }
+
+        return findMember;
+    }
 }

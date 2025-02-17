@@ -10,7 +10,12 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "follows")
+@Table(
+        name = "follows",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"follower_id", "following_id"})
+        }
+)
 public class Follow extends BaseDateTime{
 
     @Id

@@ -138,10 +138,20 @@ public class MemberService {
         );
     }
 
+    private Member findActiveMemberByEmailOrElseThrow(String email) {
+        return memberRepository.findActiveMemberByEmail(email).orElseThrow(() ->
+                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 이메일 유저가 없음"));
+    }
+
     public Member findMemberByIdOrElseThrow(Long memebrId) {
         return memberRepository.findMemberById(memebrId).orElseThrow(() ->
                 new RuntimeException("찾아지는 아이디 유저가 없음")
         );
+    }
+
+    public Member findActiveMemberByIdOrElseThrow(Long id) {
+        return memberRepository.findActiveMemberById(id).orElseThrow(() ->
+                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 id 유저가 없음"));
     }
 
     public Member loginMember(String email, String password) {

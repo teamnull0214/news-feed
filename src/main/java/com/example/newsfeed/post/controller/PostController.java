@@ -1,11 +1,13 @@
 package com.example.newsfeed.post.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.post.dto.PostCreateRequestDto;
 import com.example.newsfeed.post.dto.PostCreateResponseDto;
 import com.example.newsfeed.post.service.PostService;
 import com.example.newsfeed.post.dto.PostResponseDto;
 import com.example.newsfeed.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,12 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping("/members/{memberId}/posts")
+    // 게시물 생성 (로그인 상태)
+    @LoginRequired
+    @PostMapping
     public ResponseEntity<PostCreateResponseDto> createPost(
             @SessionAttribute(name = "member") SessionMemberDto session,
-            @RequestBody PostCreateRequestDto requestDto
+            @Valid @RequestBody PostCreateRequestDto requestDto
     ) {
 
         log.info("게시물 생성 API 호출");

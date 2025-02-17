@@ -34,8 +34,11 @@ public class PostService extends BaseDateTime {
 
     @Transactional
     public PostCreateResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
-        Member member = Member.fromMemberId(session.getId());
-        Post post = new Post(requestDto.getImage(), requestDto.getContents(), member);
+        Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
+                () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
+        );
+        Member findMember = Member.fromMemberId(session.getId());
+        Post post = new Post(requestDto.getImage(), requestDto.getContents(), findMember);
         Post savedPost = postRepository.save(post);
 
         log.info("게시물 생성 성공");

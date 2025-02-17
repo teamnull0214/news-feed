@@ -33,7 +33,6 @@ public class Post extends BaseDateTime {
         this.member = member;
     }
 
-
     public Post() {
 
     }

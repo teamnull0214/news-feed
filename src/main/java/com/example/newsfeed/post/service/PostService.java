@@ -31,8 +31,8 @@ public class PostService extends BaseDateTime {
         return new PostCreateResponseDto(
                 savedPost.getId(),
                 member.getNickname(),
-                savedPost.getImage(),
                 savedPost.getContents(),
+                savedPost.getImage(),
                 savedPost.getCreatedAt(),
                 savedPost.getModifiedAt()
         );

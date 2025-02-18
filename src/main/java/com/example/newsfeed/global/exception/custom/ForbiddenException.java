@@ -4,7 +4,6 @@ import com.example.newsfeed.global.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public class ForbiddenException{
-
     /*비밀번호 불일치 예외*/
     public static class PasswordMismatchException extends CustomException {
         public PasswordMismatchException(ErrorCode errorCode) {
@@ -32,5 +31,4 @@ public class ForbiddenException{
             super(errorcode);
         }
     }
-
 }

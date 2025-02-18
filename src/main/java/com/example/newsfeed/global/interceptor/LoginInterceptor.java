@@ -3,6 +3,7 @@ package com.example.newsfeed.global.interceptor;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.global.exception.custom.UnauthorizedException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,7 +30,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (isLoginRequired(handlerMethod)) {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("member") == null) {
-                throw new UnauthorizedException.LoginRequiredException(LOGIN_REQUIRED);
+                throw
             }
             SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute("member");
             log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",

@@ -44,6 +44,7 @@ public class HandlerException {
         return ResponseEntity.status(exception.getStatusCode()).body(errorResponseDto);
     }
 
+    /*RuntimeException 예외처리*/
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponseDto<Object>> handleRuntimeException(RuntimeException exception) {
         ErrorResponseDto<Object> errorResponseDto = new ErrorResponseDto<>();

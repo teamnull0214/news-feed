@@ -13,6 +13,4 @@ public class CustomException extends RuntimeException {
         this.statusCode = errorCode.getStatusCode();
         this.message = errorCode.getMessage();
     }
-
-    /*todo: 각 예외 클래스 static에서 그냥 class로 변경*/
 }

@@ -1,11 +1,11 @@
 package com.example.newsfeed.post.dto;
 
+import com.example.newsfeed.global.entity.SessionMemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.time.LocalDateTime;
 
 import com.example.newsfeed.post.entity.Post;
-import com.example.newsfeed.member.entity.Member;
 
 @Getter
 @AllArgsConstructor
@@ -14,23 +14,20 @@ public class PostResponseDto {
     // feat/post-create 브랜치에서 만든 변수
     private final Long id;
     private final String nickname;
+    private final String email;
+    private final String contents;
     private final String image;
-    private final String contents; // 누락된 contents 추가
     private final int likeCount;
     private final int commentCount;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    /*
-    feat/post-read 브랜치
-    JpaRepository에 전달할 Dto
-    PostService.java -> public List<PostResponseDto> findAll() 메서드에서 해당 메서드 호출
-    */
+    // 다건/단건 조회
     public static PostResponseDto toDto(Post post){
-        Member writer = post.getMember(); // Post 클래스의 멤버변수 private Member member에 접근!!
         return new PostResponseDto(
                 post.getId(),
-                writer.getNickname(),
+                post.getMember().getNickname(),
+                post.getMember().getEmail(),
                 post.getContents(),
                 post.getImage(),
                 post.getPostLikeList().size(),
@@ -40,4 +37,18 @@ public class PostResponseDto {
         );
     }
 
+    // 게시물 생성
+    public static PostResponseDto toDto(Post post, SessionMemberDto dto){
+        return new PostResponseDto(
+                post.getId(),
+                dto.getNickname(),
+                dto.getEmail(),
+                post.getContents(),
+                post.getImage(),
+                post.getPostLikeList().size(),
+                post.getCommentList().size(),
+                post.getCreatedAt(),
+                post.getModifiedAt()
+        );
+    }
 }

@@ -1,21 +1,21 @@
 package com.example.newsfeed.post.entity;
 
-import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.global.entity.BaseDateTime;
 import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Getter
 @Entity
 @Table(name = "posts")
+@NoArgsConstructor
 public class Post extends BaseDateTime {
 
     @Id
@@ -45,13 +45,9 @@ public class Post extends BaseDateTime {
         this.member = member;
     }
 
-    public Post() {
-    }
-
     public void updateImage(String image) {
         this.image = image;
     }
-
     public void updateContents(String contents) {
         this.contents = contents;
     }

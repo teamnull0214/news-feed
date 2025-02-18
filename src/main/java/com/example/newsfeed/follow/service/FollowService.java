@@ -3,7 +3,7 @@ package com.example.newsfeed.follow.service;
 import com.example.newsfeed.follow.entity.Follow;
 import com.example.newsfeed.follow.entity.FollowStatus;
 import com.example.newsfeed.follow.repository.FollowRepository;
-import com.example.newsfeed.member.dto.MemberListResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

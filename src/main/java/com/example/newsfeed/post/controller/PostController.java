@@ -1,14 +1,10 @@
 package com.example.newsfeed.post.controller;
 
-import com.example.newsfeed.post.dto.PostUpdateRequestDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.post.dto.PostCreateRequestDto;
-import com.example.newsfeed.post.dto.PostCreateResponseDto;
+import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.dto.PostResponseDto;
 import com.example.newsfeed.post.service.PostService;
 import jakarta.validation.Valid;
@@ -32,64 +28,42 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(
             @SessionAttribute(name = "member") SessionMemberDto session,
-            @Valid @RequestBody PostCreateRequestDto requestDto
+            @Valid @RequestBody PostRequestDto requestDto
     ) {
         return ResponseEntity.ok(postService.createPost(session, requestDto));
     }
 
-    /*
-    feat/post-read 브랜치
-    member들이 작성한 모든 글을 조회하는 메서드
-    예외처리 추가하기 -> 현재 기본기능만 구현되어있음
-    */
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> findAllPosts() {
-
-        List<PostResponseDto> postResponseDtoList = postService.findAll();
-
-        return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK); // status 200
+        List<PostResponseDto> postResponseDtoList = postService.findAllPost();
+        return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
     }
 
-    /*
-    feat/post-read 브랜치
-    postId를 통해 특정 게시물을 조회하는 메서드
-    */
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponseDto> findPostById(@PathVariable Long postId) {
-
-        PostResponseDto postResponseDto = postService.findById(postId);
-
-        // 성공시 status 200 실패시 stauts 404 PostRepository.java ->  findByIdOrElseThrow 메서드 참고
-        return new ResponseEntity<>(postResponseDto, HttpStatus.OK); // status 200
+        PostResponseDto postResponseDto = postService.findPostById(postId);
+        return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
-    //feat/post-updateDelete
-    // 포스트 업데이트
+    // 게시물 업데이트
+    @LoginRequired
     @PatchMapping("/{postId}")
     public ResponseEntity<PostResponseDto> updateImageAndContents(
             @PathVariable Long postId,
-            @Valid @RequestBody PostUpdateRequestDto dto,
-            HttpServletRequest httpServletRequest
+            @Valid @RequestBody PostRequestDto dto,
+            @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        Long memberId = getMemberIdBySession(httpServletRequest);
-        PostResponseDto postResponseDto = postService.updateImageAndContents(postId, memberId, dto);
+        PostResponseDto postResponseDto = postService.updateImageAndContents(postId, session.getId(), dto);
         return ResponseEntity.ok(postResponseDto);
     }
 
-    //feat/post-updateDelete
-    //삭제
+    // 게시물 삭제
+    @LoginRequired
     @DeleteMapping("/{postId}")
     public void deletePost(
             @PathVariable Long postId,
-            HttpServletRequest httpServletRequest
+            @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        Long memberId = getMemberIdBySession(httpServletRequest);
-        postService.deletePost(postId, memberId);
+        postService.deletePost(postId, session.getId());
     }
-
-    private Long getMemberIdBySession(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession(false);
-        return (Long) session.getAttribute("memberId");
-    }
-
 }

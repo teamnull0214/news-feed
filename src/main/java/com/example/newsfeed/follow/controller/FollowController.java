@@ -3,7 +3,7 @@ package com.example.newsfeed.follow.controller;
 import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.MemberListResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

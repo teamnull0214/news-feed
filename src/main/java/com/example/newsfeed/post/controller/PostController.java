@@ -3,6 +3,7 @@ package com.example.newsfeed.post.controller;
 import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
@@ -35,19 +36,6 @@ public class PostController {
             @Valid @RequestBody PostCreateRequestDto requestDto
     ) {
         return ResponseEntity.ok(postService.createPost(session, requestDto));
-    }
-
-    /*
-    feat/post-read 브랜치
-    member들이 작성한 모든 글을 조회하는 메서드
-    예외처리 추가하기 -> 현재 기본기능만 구현되어있음
-    */
-    @GetMapping
-    public ResponseEntity<List<PostResponseDto>> findAllPosts() {
-
-        List<PostResponseDto> postResponseDtoList = postService.findAll();
-
-        return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK); // status 200
     }
 
     /*

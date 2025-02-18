@@ -9,17 +9,17 @@ import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+
 @Slf4j
-@Service
+@Service("postService")
 @RequiredArgsConstructor
 public class PostService {
 
@@ -49,10 +49,10 @@ public class PostService {
     feat/post-read 브랜치
     모든 작성글을 찾는 서비스 JpaRepository에 스트림
     */
+    @Transactional(readOnly = true)
     public List<PostResponseDto> findAll() {
         return postRepository.findAll().stream().map(PostResponseDto::toDto).toList();
     }
-
 
     /*
     feat/post-read 브랜치

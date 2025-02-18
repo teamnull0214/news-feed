@@ -1,0 +1,49 @@
+package com.example.newsfeed.post.service;
+
+import com.example.newsfeed.post.dto.PostResponseDto;
+import com.example.newsfeed.post.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@Slf4j
+@Service("postSortService")
+@RequiredArgsConstructor
+public class PostSortService {
+
+    private final PostRepository postRepository;
+
+/*    *//* 수정일 기준 전체 조회 *//*
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findPostsSortedByModified(Long memberId, String startDate, String endDate) {
+        return postRepository.findAllByModifiedAt(memberId)
+                .stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+    }
+
+    *//* 등록일 기준 전체 조회 *//*
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findPostsSortedByCreatedAt(Long memberId, String startDate, String endDate) {
+        return postRepository.findAllByCreatedAt(memberId)
+                .stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+    }*/
+
+    /* 좋아요 기준 전체 조회 */
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findPostsSortedByLIKE(Long memberId, String startDate, String endDate) {
+
+        return postRepository.findAllByLike(memberId,startDate,endDate)
+                .stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+    }
+
+}

@@ -102,9 +102,9 @@ public class MemberController {
      */
     @LoginRequired // 로그인을 안하면 LoginIntercepter.java 클래스를 통해 예외 발생 throw new RuntimeException("로그인 필요")
     @GetMapping
-    public ResponseEntity<FindMyMemberDto> findMyMember(HttpServletRequest httpServletRequest)
+    public ResponseEntity<FindMyMemberDto> findMyMember(@SessionAttribute(name ="member") SessionMemberDto currSession)
     {
-        FindMyMemberDto findMyMemberDto = memberService.findMyMember(httpServletRequest);
+        FindMyMemberDto findMyMemberDto = memberService.findMyMember(currSession);
 
         return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK); // status 200
     }

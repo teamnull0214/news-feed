@@ -1,7 +1,5 @@
 package com.example.newsfeed.global.entity;
 
-import com.example.newsfeed.global.config.PasswordEncoder;
-import com.example.newsfeed.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,9 +15,5 @@ public class SessionMemberDto {
     public SessionMemberDto setNickname(String nickname) {
         this.nickname = nickname;
         return this;
-    }
-
-    public Member toEntity() {
-        return new Member(id, username, nickname, email);
     }
 }

@@ -12,8 +12,6 @@ public interface MemberRepository  extends JpaRepository<Member, Long> {
 
     Optional<Member> findMemberByEmail(String email);
 
-    Optional<Member> findMemberById(Long id);
-
     // 탈퇴하지 않은 등록된 유저 중 email 값으로 조회 (로그인에 사용)
     @Query("SELECT u FROM Member u WHERE u.email = :email AND u.isDeleted = false")
     Optional<Member> findActiveMemberByEmail(@Param("email") String email);

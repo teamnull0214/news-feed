@@ -22,7 +22,8 @@ public class MemberRequestDto {
     private final String nickname;
 
     @NotBlank(message = "이메일을 입력해주세요")
-    @Email (message = "이메일 형식이 맞지 않습니다.")
+    @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$",
+            message = "이메일 형식이 올바르지 않습니다.")
     private final String email;
 
     @NotBlank (message = "비밀번호를 입력해주세요")
@@ -38,5 +39,4 @@ public class MemberRequestDto {
     public Member toEntity() {
         return new Member(name, nickname, email, PasswordEncoder.encode(password));
     }
-
 }

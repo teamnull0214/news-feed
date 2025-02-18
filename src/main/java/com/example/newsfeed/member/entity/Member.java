@@ -35,13 +35,6 @@ public class Member extends BaseDateTime {
     @ColumnDefault("false")
     private boolean isDeleted;
 
-
-    public Member(String username, String nickname, String email) {
-        this.username = username;
-        this.nickname = nickname;
-        this.email = email;
-    }
-
     // 로그인에 사용
     public Member(String username, String nickname, String email, String password) {
         this.username = username;
@@ -50,35 +43,9 @@ public class Member extends BaseDateTime {
         this.password = password;
     }
 
-    // 세션을 entity로(회원 프로필 수정) --> 안씀
-    public Member(Long id, String username, String nickname, String email) {
-        this.id = id;
-        this.username = username;
-        this.nickname = nickname;
-        this.email = email;
-    }
-
-
-    public void updatePassword(String newPassword) {
-        this.password = newPassword;
-    }
-
-    public void updateIsDeleteTrueAndNickname() {
-        this.nickname = "삭제된 유저입니다";
-        this.isDeleted = true;
-    }
-
-    public void profileUpdate(String username, String nickname, String info, String mbti){
-        this.username = username;
-        this.nickname = nickname;
-        this.info = info;
-        this.mbti = mbti;
-    }
-
     public Member(Long id){
         this.id = id;
     }
-
 
     // Member 프로필 수정
     // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문에 필요한 메서드
@@ -93,4 +60,12 @@ public class Member extends BaseDateTime {
         this.nickname = nickname;
     }
 
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateIsDeleteTrueAndNickname() {
+        this.nickname = "삭제된 유저입니다";
+        this.isDeleted = true;
+    }
 }

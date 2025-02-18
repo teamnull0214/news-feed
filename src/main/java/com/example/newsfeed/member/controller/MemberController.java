@@ -4,9 +4,9 @@ import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.response.MemberResponseDto;
-import com.example.newsfeed.member.dto.deleteRequestDto;
+import com.example.newsfeed.member.dto.request.MemberDeleteRequestDto;
 import com.example.newsfeed.member.dto.response.MemberUpdateProfileResponseDto;
-import com.example.newsfeed.member.dto.updatePasswordRequestDto;
+import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,21 +55,17 @@ public class MemberController {
     @LoginRequired
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(
-            @Valid @RequestBody updatePasswordRequestDto dto,
-            HttpServletRequest httpServletRequest
+            @Valid @RequestBody MemberUpdatePasswordRequestDto dto,
+            @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-
-        HttpSession session = httpServletRequest.getSession();
-        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
-        memberService.updatePassword(sessionMemberDto, dto);
-
+        memberService.updatePassword(session, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @LoginRequired
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteMember(
-            @Valid @RequestBody deleteRequestDto dto,
+            @Valid @RequestBody MemberDeleteRequestDto dto,
             HttpServletRequest httpServletRequest
     ) {
         HttpSession session = httpServletRequest.getSession(false);

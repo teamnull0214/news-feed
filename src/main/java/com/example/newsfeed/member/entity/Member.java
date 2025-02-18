@@ -82,4 +82,6 @@ public class Member extends BaseDateTime {
     public void updateMbti(String mbti) {
         this.mbti = mbti;
     }
+
+
 }

@@ -2,6 +2,9 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.ConflictException;
+import com.example.newsfeed.global.exception.custom.ForbiddenException;
+import com.example.newsfeed.global.exception.custom.NotFoundException;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
@@ -14,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.example.newsfeed.global.exception.ErrorCode.*;
+
 
 @Slf4j
 @Service
@@ -34,7 +40,7 @@ public class MemberService {
 
         /*password와 passwordCheck가 일치하지 않는 경우*/
         if (!password.equals(passwordCheck) ) {
-            throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordConfirmMismatchException(PASSWORD_CONFIRM_MISMATCH);
         }
 
         Optional<Member> memberByEmail = memberRepository.findMemberByEmail(email);
@@ -43,10 +49,10 @@ public class MemberService {
             Member findMember = memberByEmail.get();
 
             if(findMember.isDeleted()) {
-                throw new RuntimeException("탈퇴한 유저입니다.");
+                throw new ForbiddenException.MemberDeactivedException(MEMBER_DEACTIVATED);
             }
 
-            throw new RuntimeException("이미 존재하는 회원입니다.");
+            throw new ConflictException.MemberAlreadyExistsException(MEMBER_ALREADY_EXISTS);
         }
 
         /*member 객체 생성 및 비밀번호 암호화*/
@@ -67,7 +73,7 @@ public class MemberService {
     @Transactional
     public UpdateMemberProfileResponseDto profileUpdate(SessionMemberDto session, UpdateMemberProfileRequestDto requestDto) {
         Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
-                () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
+                () -> new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND)
         );
 
         // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문
@@ -110,17 +116,17 @@ public class MemberService {
 
         /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
         if(!passwordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
 
         /*현재 비밀번호와 동일한 비밀번호로 수정하는 경우*/
         if(dto.getOldPassword().equals(dto.getNewPassword())) {
-            throw new RuntimeException("새 비밀번호는 기존 비밀번호와 달라야 합니다.");
+            throw new ForbiddenException.NewPasswordSameAsOldException(NEW_PASSWORD_SAME_AS_OLD);
         }
 
         /*새 비밀번호와 새 비밀번호 확인이 일치하지 않은 경우*/
         if(!dto.getNewPassword().equals(dto.getNewPasswordCheck())) {
-            throw new RuntimeException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordConfirmMismatchException(PASSWORD_CONFIRM_MISMATCH);
         }
 
         /*비밀번호 암호화 후 업데이트*/
@@ -134,7 +140,7 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
         if (!passwordEncoder.matches(password, findMember.getPassword())) {
-            throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
 
         // hard delete 대신 isDelete 를 true 하는 방식으로 soft delete
@@ -144,24 +150,24 @@ public class MemberService {
 
     private Member findMemberByEmailOrElseThrow(String email) {
         return memberRepository.findMemberByEmail(email).orElseThrow(() ->
-                new RuntimeException("찾아지는 이메일 유저가 없음")
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND)
         );
     }
 
     private Member findActiveMemberByEmailOrElseThrow(String email) {
         return memberRepository.findActiveMemberByEmail(email).orElseThrow(() ->
-                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 이메일 유저가 없음"));
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND));
     }
 
     public Member findMemberByIdOrElseThrow(Long memberId) {
         return memberRepository.findMemberById(memberId).orElseThrow(() ->
-                new RuntimeException("찾아지는 아이디 유저가 없음")
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND)
         );
     }
 
     public Member findActiveMemberByIdOrElseThrow(Long id) {
         return memberRepository.findActiveMemberById(id).orElseThrow(() ->
-                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 id 유저가 없음"));
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND));
     }
 
     public Member loginMember(String email, String password) {
@@ -169,7 +175,7 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(email);
 
         if (!passwordEncoder.matches(password, findMember.getPassword())) {
-            throw new RuntimeException("비밀번호가 불일치");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
 
         return findMember;

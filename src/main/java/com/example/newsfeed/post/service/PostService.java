@@ -1,6 +1,7 @@
 package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.NotFoundException;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import com.example.newsfeed.post.dto.PostCreateRequestDto;
@@ -9,7 +10,6 @@ import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.newsfeed.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.example.newsfeed.global.exception.ErrorCode.POST_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -28,7 +31,7 @@ public class PostService {
 
     public PostCreateResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
         Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
-                () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
+                () -> new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND)
         );
         Member findMember = Member.fromMemberId(session.getId());
         Post post = new Post(requestDto.getImage(), requestDto.getContents(), findMember);
@@ -73,7 +76,7 @@ public class PostService {
         Member findPostMembers = findPost.getMember();
 
         if (Objects.equals(memberId, findPostMembers.getId())) {
-            throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
+            throw new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND);
         }
 
         if (dto.getImage() != null) {
@@ -95,10 +98,10 @@ public class PostService {
         Member findPostMembers = findPost.getMember();
 
         if (Objects.equals(memberId, findPostMembers.getId())) {
-            throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
+            throw new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND);
         }
         if (!postRepository.existsById(postId)) {
-            throw new IllegalArgumentException("해당 ID 찾을 수 없음");
+            throw new NotFoundException.PostNotFoundException(POST_NOT_FOUND);
         }
 
         postRepository.deleteById(postId);
@@ -106,7 +109,7 @@ public class PostService {
 
     private Post findPostByIdOrElseThrow(Long postId) {
         return postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("해당 ID 찾을 수 없음")
+                () -> new NotFoundException.PostNotFoundException(POST_NOT_FOUND)
         );
     }
 

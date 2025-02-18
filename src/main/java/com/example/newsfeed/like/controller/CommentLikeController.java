@@ -1,11 +1,9 @@
 package com.example.newsfeed.like.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.like.service.CommentLikeService;
-import com.example.newsfeed.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/comments")
 @RequiredArgsConstructor
-public class CommentLikeController implements LikeController{
+public class CommentLikeController{
 
-    @Qualifier("commentLikeService")
     private final CommentLikeService commentLikeService;
 
-    @Override
+    @LoginRequired
     @PostMapping("/{commentId}/likes")
     public ResponseEntity<Void> createLike(
             @PathVariable Long commentId,
@@ -28,7 +25,7 @@ public class CommentLikeController implements LikeController{
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Override
+    @LoginRequired
     @DeleteMapping("/{commentId}/likes")
     public ResponseEntity<Void> deleteLike(
             @PathVariable Long commentId,

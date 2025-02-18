@@ -3,7 +3,8 @@ package com.example.newsfeed.follow.controller;
 import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.MemberListResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController

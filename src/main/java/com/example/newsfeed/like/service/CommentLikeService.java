@@ -34,14 +34,13 @@ public class CommentLikeService implements LikeService {
             if (commentLike.getLikeStatus() == LIKE) {
                 throw new RuntimeException("이미 좋아요를 누른 상태입니다.");
             }
-            commentLike.updateCommentLike(LIKE);  // 기존 좋아요 상태를 업데이트
+            // 이미 존재하는 좋아요를 업데이트한 경우, 새로 생성할 필요 없음
+            commentLike.updateCommentLike(LIKE);
+            return;
         }
 
-        /* 좋아요가 눌려있지 않은 경우 */
+        /* 좋아요가 눌려있지 않은 경우 (최초 좋아요 등록) */
         CommentLike commentLike = new CommentLike(new Member(memberId), findComment);
-        commentLike.updateCommentLike(LIKE);  // 기존 좋아요 상태를 업데이트
-
-        // 이미 존재하는 좋아요를 업데이트한 경우, 새로 생성할 필요 없음
         commentLikeRepository.save(commentLike);
     }
 

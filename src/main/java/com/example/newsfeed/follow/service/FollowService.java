@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -64,13 +65,19 @@ public class FollowService {
         findFollow.updateFollowStatusFalse();
     }
 
+    @Transactional(readOnly = true)
     public List<MemberListResponseDto> findAllFollowerMembers(Long id) {
         List<Follow> followList = followRepository.findByFollowerMemberId(id);
 
         return followList.stream()
                 .filter(follow -> follow.getFollowStatus() == FollowStatus.FOLLOWING)
-                .map(follow -> new MemberListResponseDto(follow.getFollowingMember()))
-                .toList();
+                .map(Follow::getFollowingMember)
+                .filter(member -> !member.isDeleted())
+                .map(member -> {
+                    long followerCount = followRepository.countByFollowingMemberId(member.getId());
+                    return new MemberListResponseDto(member, followerCount);
+                })
+                .collect(Collectors.toList());
     }
 
     private Follow findFollowByFollowerMemberAndFollowingMemberOrElseThrow(Member followerMember, Member followingMember) {

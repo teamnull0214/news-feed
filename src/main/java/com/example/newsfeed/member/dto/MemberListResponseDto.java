@@ -12,12 +12,12 @@ public class MemberListResponseDto {
     private Long id;
     private String nickname;
     private String email;
-    private int followerCount;
+    private long followerCount;
 
-    public MemberListResponseDto(Member member) {
+    public MemberListResponseDto(Member member, long followerCount) {
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
-        // todo: 양방향을 사용할 수 있으므로 followerCount는 null
+        this.followerCount = followerCount;
     }
 }

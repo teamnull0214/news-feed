@@ -4,7 +4,6 @@ import com.example.newsfeed.like.entity.LikeStatus;
 import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.like.repository.PostLikeRepository;
 import com.example.newsfeed.member.entity.Member;
-import com.example.newsfeed.member.service.MemberService;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ public class PostLikeService implements LikeService{
 
     private final PostLikeRepository postLikeRepository;
     private final PostService postService;
-    private final MemberService memberService;
 
     @Override
     @Transactional

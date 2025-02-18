@@ -1,5 +1,6 @@
 package com.example.newsfeed.like.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.like.service.LikeService;
 import com.example.newsfeed.like.service.PostLikeService;
@@ -19,6 +20,7 @@ public class PostLikeController implements LikeController{
     private final PostLikeService postLikeService;
 
     @Override
+    @LoginRequired
     @PostMapping("/{postId}/likes")
     public ResponseEntity<Void> createLike(
             @PathVariable Long postId,
@@ -29,6 +31,7 @@ public class PostLikeController implements LikeController{
     }
 
     @Override
+    @LoginRequired
     @DeleteMapping("/{postId}/likes")
     public ResponseEntity<Void> deleteLike(
             @PathVariable Long postId,

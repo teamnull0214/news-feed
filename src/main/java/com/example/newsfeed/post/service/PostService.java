@@ -106,7 +106,7 @@ public class PostService {
 
     private Post findPostByIdOrElseThrow(Long postId) {
         return postRepository.findById(postId).orElseThrow(
-            () -> new IllegalArgumentException("해당 ID 찾을 수 없음")
+                () -> new IllegalArgumentException("해당 ID 찾을 수 없음")
         );
     }
 

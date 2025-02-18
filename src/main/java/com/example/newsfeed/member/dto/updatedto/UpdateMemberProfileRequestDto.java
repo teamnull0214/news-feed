@@ -11,19 +11,13 @@ public class UpdateMemberProfileRequestDto {
 
     @NotBlank(message = "이름(실명)을 입력해주세요.")
     @Size(min = 1, max = 14, message = "이름은 1 ~ 14자 이어야 합니다.")
-    private final String name;
+    private String username;
 
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Size(min = 1, max = 14, message = "닉네임은 1 ~ 14자 이어야 합니다.")
-    private final String nickname;
+    private String nickname;
 
-    private final String info;
-    private final String mbti;
+    private String info;
+    private String mbti;
 
-    public UpdateMemberProfileRequestDto(String name, String nickname, String info, String mbti) {
-        this.name = name;
-        this.nickname = nickname;
-        this.info = info;
-        this.mbti = mbti;
-    }
 }

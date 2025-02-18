@@ -22,7 +22,7 @@ public class PostLike extends BaseDateTime {
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member Member;
+    private Member member;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,5 +31,14 @@ public class PostLike extends BaseDateTime {
 
     @Enumerated(EnumType.STRING)
     private LikeStatus likeStatus;
+
+    public PostLike(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+    }
+
+    public void updateLikeStatus(LikeStatus likeStatus) {
+        this.likeStatus = likeStatus;
+    }
 
 }

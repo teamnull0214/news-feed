@@ -41,7 +41,7 @@ public class Follow extends BaseDateTime{
         this.followStatus = FollowStatus.FOLLOWING;
     }
 
-    public void updateFollowStatusFalse() {
-        this.followStatus = FollowStatus.NOT_FOLLOWING;
+    public void updateFollowStatus(FollowStatus followStatus) {
+        this.followStatus = followStatus;
     }
 }

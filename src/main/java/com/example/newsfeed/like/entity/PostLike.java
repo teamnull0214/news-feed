@@ -34,6 +34,7 @@ public class PostLike extends BaseDateTime {
     public PostLike(Member member, Post post) {
         this.member = member;
         this.post = post;
+        this.likeStatus = LikeStatus.LIKE;
     }
 
     public void updateLikeStatus(LikeStatus likeStatus) {

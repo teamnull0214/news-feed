@@ -1,5 +1,6 @@
 package com.example.newsfeed.comment.controller;
 
+import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.comment.dto.createdto.CommentCreateRequestDto;
 import com.example.newsfeed.comment.dto.createdto.CommentCreateResponseDto;
 import com.example.newsfeed.comment.dto.updatedto.CommentUpdateRequestDto;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +32,13 @@ public class CommentController {
     ){
         return ResponseEntity.ok(commentService.createComment(session,postId, requestDto));
     }
+
+    // 댓글 조회
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<List<CommentResponseDto>> findByPost(@PathVariable Long postId){
+        return ResponseEntity.ok(commentService.findByPost(postId));
+    }
+
 
     // 댓글수정
     @LoginRequired

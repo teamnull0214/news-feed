@@ -1,5 +1,6 @@
 package com.example.newsfeed.comment.service;
 
+import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.comment.dto.createdto.CommentCreateRequestDto;
 import com.example.newsfeed.comment.dto.createdto.CommentCreateResponseDto;
 import com.example.newsfeed.comment.dto.updatedto.CommentUpdateRequestDto;
@@ -17,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PatchMapping;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +74,23 @@ public class CommentService {
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         );
+    }
+
+    // 댓글 조회
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> findByPost(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        return comments.stream()
+                .map(comment -> new CommentResponseDto(
+                        comment.getId(),
+                        comment.getPost().getId(),
+                        comment.getMember().getNickname(),
+                        comment.getMember().getEmail(),
+                        comment.getCommentContents(),
+                        comment.getCreatedAt(),
+                        comment.getModifiedAt()
+                )).collect(Collectors.toList());
     }
     // 해당 댓글 삭제
     @Transactional

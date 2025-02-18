@@ -16,6 +16,7 @@ public class PostResponseDto {
     private final String nickname;
     private final String image;
     private final String contents; // 누락된 contents 추가
+    private final int likeCount;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
@@ -37,11 +38,12 @@ public class PostResponseDto {
     feat/post-read 브랜치
     PostResponseDto 생성자
     */
-    public PostResponseDto(Long id, String nickname, String contents, String image, LocalDateTime createdAt, LocalDateTime modifiedAt){
+    public PostResponseDto(Long id, String nickname, String contents, String image, int likeCount, LocalDateTime createdAt, LocalDateTime modifiedAt){
         this.id = id;
         this.nickname = nickname;
         this.contents = contents;
         this.image = image;
+        this.likeCount = likeCount;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
@@ -54,7 +56,15 @@ public class PostResponseDto {
     */
     public static PostResponseDto toDto(Post post){
         Member writer = post.getMember(); // Post 클래스의 멤버변수 private Member member에 접근!!
-        return new PostResponseDto(post.getId(), writer.getNickname(), post.getContents(), post.getImage(), post.getCreatedAt(), post.getModifiedAt());
+        return new PostResponseDto(
+                post.getId(),
+                writer.getNickname(),
+                post.getContents(),
+                post.getImage(),
+                post.getPostLikeList().size(),
+                post.getCreatedAt(),
+                post.getModifiedAt()
+        );
     }
 
 }

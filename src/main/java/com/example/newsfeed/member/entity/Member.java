@@ -74,4 +74,12 @@ public class Member extends BaseDateTime {
         return new Member(id);
     }
 
+    // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문에 필요한 메서드(2개)
+    public void updateInfo(String info) {
+        this.info = info;
+    }
+
+    public void updateMbti(String mbti) {
+        this.mbti = mbti;
+    }
 }

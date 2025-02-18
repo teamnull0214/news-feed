@@ -107,7 +107,7 @@ public class PostService {
         postRepository.deleteById(postId);
     }
 
-    private Post findPostByIdOrElseThrow(Long postId) {
+    public Post findPostByIdOrElseThrow(Long postId) {
         return postRepository.findById(postId).orElseThrow(
                 () -> new NotFoundException.PostNotFoundException(POST_NOT_FOUND)
         );

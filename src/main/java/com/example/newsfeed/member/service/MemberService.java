@@ -36,7 +36,7 @@ public class MemberService {
     ) {
 
         /*password와 passwordCheck가 일치하지 않는 경우*/
-        if (!password.equals(passwordCheck) ) {
+        if (!password.equals(passwordCheck)) {
             throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
         }
 

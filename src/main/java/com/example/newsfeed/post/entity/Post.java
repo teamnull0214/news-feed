@@ -1,10 +1,14 @@
 package com.example.newsfeed.post.entity;
 
 import com.example.newsfeed.global.entity.BaseDateTime;
+import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -26,6 +30,9 @@ public class Post extends BaseDateTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<PostLike> postLikeList = new ArrayList<>();
 
     public Post(String image, String contents, Member member) {
         this.image = image;

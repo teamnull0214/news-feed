@@ -3,7 +3,7 @@ package com.example.newsfeed.member.service;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
-import com.example.newsfeed.member.dto.findmemberdto.FindMemberDto;
+import com.example.newsfeed.member.dto.findmemberdto.*;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
@@ -180,28 +180,63 @@ public class MemberService {
 
     /*
     feat/member-read
-    멤버 id로 유저 프로필 조회
+    멤버 id로 멤버(최종 사용자) 프로필 조회
      */
     public FindMemberDto findMemberById(Long memberId){
 
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Optional<Member> optionalMember = memberRepository.findActiveMemberById(memberId);
 
-        // 조회에 실패할 경우
+
+        /* 멤버 조회에 실패한 경우
+         memberRepository.findActiveMemberById(memberId);에서
+         MemberRepository.java는 interface라 해당 구역에서 예외처리를 할 수가 없다 (정말사실인지 따져봐야됨)
+         따라서 현 위치인 if문에서 예외처리를 해준다
+        */
         if(optionalMember.isEmpty()){
-            // status 404 Not Found
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 id값을 갖는 유저는 존재하지 않습니다.");
+            /*
+             DB에서 조회하고자 하는 memberId 튜플의 isDelete 애트리뷰트가 true인 경우 MemberRepository.java의
+             findActiveMemberByEmail 메서드는 null 값을 optionalMember에 return 할것이다.
+             그 다음 인스턴스인 optaionalMember를 여기 if문에서 isEmpty()메서드로 optionalMember == null 인지 체크 한다
+             */
+            // status 404 Not Found 예외
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 memberId값을 갖는 유저는 탈퇴했거나 존재하지 않습니다.");
         }
 
-        Member findMember = optionalMember.get();
+        /* 멤버 조회에 성공한 경우
+        Member 인스턴스를 생성후 new연산자로 생성된 FindMemberDto에 @Getter를 이용하여
+        데이터를 저장하고 caller인 MemberController에 FindMemberDto의 reference를 return한다
+        */
+        else{
 
-        return new FindMemberDto(findMember.getId(), findMember.getNickname(), findMember.getEmail(), findMember.getInfo(), findMember.getMbti(), findMember.getCreatedAt());
+            Member findMember = optionalMember.get();
+            return new FindMemberDto(findMember.getId(), findMember.getNickname(), findMember.getEmail(), findMember.getInfo(), findMember.getMbti(), findMember.getCreatedAt());
+        }
 
     }
 
 
 
 
+    /*
+    feat/member-read
+    본인 유저 프로필 조회 메서드
 
+    만드는중입니당 underconstruction!!
+     */
+    public FindMyMemberDto findMyMember(){
+
+        // 로그인 세션에서 본인 memberId받아서 밑에 넣는 코드 만들꺼임
+        Optional<Member> optionalMember = memberRepository.findActiveMemberById(memberId);
+
+        /*
+        본인 유저프로필을 조회하는대 다른사람 memberId를 조회할리도 없고
+        예외처리 만들어봤자 시간낭비라서 안만듦ㅋ
+         */
+
+        Member findMyMember = optionalMember.get(); // 내 유저 프로필이니깐 isPresent()로 검사 안해도 됨
+        return new FindMyMemberDto(findMyMember.getId(), findMyMember.getNickname(), findMyMember.getEmail(), findMyMember.getInfo(), findMyMember.getMbti(), findMyMember.getCreatedAt());
+
+    }
 
 
 

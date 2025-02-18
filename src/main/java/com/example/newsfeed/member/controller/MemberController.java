@@ -5,7 +5,7 @@ import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.deleteRequestDto;
-import com.example.newsfeed.member.dto.findmemberdto.FindMemberDto;
+import com.example.newsfeed.member.dto.findmemberdto.*;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
@@ -84,7 +84,7 @@ public class MemberController {
 
     /*
     feat/member-read 브랜치
-    본인이나 다른사람의 유저프로필을 조회하는 메서드
+    다른사람의 멤버프로필을 조회하는 메서드
 
      */
     @GetMapping("/{memberId}")
@@ -95,6 +95,19 @@ public class MemberController {
         return new ResponseEntity<>(findMemberDto, HttpStatus.OK);
     }
 
+
+    /*
+    feat/member-read 브랜치
+    본인의 멤버프로필을 조회하는 메서드
+
+     */
+    @GetMapping
+    public ResponseEntity<FindMyMemberDto> findMyMember()
+    {
+        FindMyMemberDto findMyMemberDto = memberService.findMyMember();
+
+        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK);
+    }
 
 
 

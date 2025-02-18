@@ -15,6 +15,10 @@ import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -103,4 +107,18 @@ public class CommentService {
         }
         commentRepository.delete(comment);
     }
+
+    @Transactional(readOnly = true)
+    public Page<CommentResponseDto> findAllPage(Long postId, int page, int size) {
+
+        long count = commentRepository.count();
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage,size, Sort.by("modifiedAt").descending());
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<CommentResponseDto> dtoList = comments.stream()
+                .map(comment -> CommentResponseDto.fromComment(comment)).toList();
+        return new PageImpl<>(dtoList, pageable, count);
+    }
+
 }

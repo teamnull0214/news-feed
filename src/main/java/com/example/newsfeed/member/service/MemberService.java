@@ -106,7 +106,7 @@ public class MemberService {
     @Transactional
     public void updatePassword(SessionMemberDto sessionMemberDto, updatePasswordRequestDto dto) {
 
-        Member findMember = findMemberByIdOrElseThrow(sessionMemberDto.getId());
+        Member findMember = findActiveMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
         /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
         if(!passwordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
@@ -131,7 +131,7 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
-        Member findMember = findMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
+        Member findMember = findActiveMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
         if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
@@ -148,15 +148,25 @@ public class MemberService {
         );
     }
 
-    private Member findMemberByIdOrElseThrow(Long memebrId) {
-        return memberRepository.findMemberById(memebrId).orElseThrow(() ->
+    private Member findActiveMemberByEmailOrElseThrow(String email) {
+        return memberRepository.findActiveMemberByEmail(email).orElseThrow(() ->
+                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 이메일 유저가 없음"));
+    }
+
+    public Member findMemberByIdOrElseThrow(Long memberId) {
+        return memberRepository.findMemberById(memberId).orElseThrow(() ->
                 new RuntimeException("찾아지는 아이디 유저가 없음")
         );
     }
 
+    public Member findActiveMemberByIdOrElseThrow(Long id) {
+        return memberRepository.findActiveMemberById(id).orElseThrow(() ->
+                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 id 유저가 없음"));
+    }
+
     public Member loginMember(String email, String password) {
 
-        Member findMember = findMemberByEmailOrElseThrow(email);
+        Member findMember = findActiveMemberByEmailOrElseThrow(email);
 
         if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 불일치");

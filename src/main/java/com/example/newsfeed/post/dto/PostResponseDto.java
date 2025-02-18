@@ -1,7 +1,6 @@
 package com.example.newsfeed.post.dto;
 
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 import com.example.newsfeed.post.entity.Post;
@@ -28,8 +27,8 @@ public class PostResponseDto {
         this.id = id;
         this.nickname = nickname;
         this.image = image;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.contents = contents;
+        }
     }
     */
 

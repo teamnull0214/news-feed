@@ -1,8 +1,6 @@
 package com.example.newsfeed.global.exception;
 
-import com.example.newsfeed.global.exception.custom.CustomException;
-import com.example.newsfeed.global.exception.custom.ForbiddenException;
-import lombok.Builder;
+import com.example.newsfeed.global.exception.custom.CustomException;import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,5 +44,13 @@ public class HandlerException {
         return ResponseEntity.status(exception.getStatusCode()).body(errorResponseDto);
     }
 
-    /*todo: 런타입 에러도 추가하기*/
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponseDto<Object>> handleRuntimeException(RuntimeException exception) {
+        ErrorResponseDto<Object> errorResponseDto = new ErrorResponseDto<>();
+
+        log.info(exception.getMessage());
+
+        errorResponseDto.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
+    }
 }

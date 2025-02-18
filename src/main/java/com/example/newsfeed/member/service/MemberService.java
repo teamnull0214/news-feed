@@ -153,8 +153,8 @@ public class MemberService {
                 new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 이메일 유저가 없음"));
     }
 
-    private Member findMemberByIdOrElseThrow(Long memebrId) {
-        return memberRepository.findMemberById(memebrId).orElseThrow(() ->
+    public Member findMemberByIdOrElseThrow(Long memberId) {
+        return memberRepository.findMemberById(memberId).orElseThrow(() ->
                 new RuntimeException("찾아지는 아이디 유저가 없음")
         );
     }

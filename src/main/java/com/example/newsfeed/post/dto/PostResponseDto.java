@@ -15,22 +15,9 @@ public class PostResponseDto {
     private final Long id;
     private final String nickname;
     private final String image;
-    private final String contents; // 누락된 contents 추가
+    private final String contents;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
-
-
-    /*
-    feat/post-create 브랜치에서 만든 생성자
-    contents가 누락되어 있습니다
-    public PostResponseDto(Long id, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt){
-        this.id = id;
-        this.nickname = nickname;
-        this.image = image;
-        this.contents = contents;
-        }
-    }
-    */
 
 
     /*

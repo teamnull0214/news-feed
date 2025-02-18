@@ -1,12 +1,17 @@
 package com.example.newsfeed.comment.entity;
 
 import com.example.newsfeed.global.entity.BaseDateTime;
+import com.example.newsfeed.like.entity.CommentLike;
+import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.entity.Post;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -26,6 +31,9 @@ public class Comment extends BaseDateTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<CommentLike> commentLikeList = new ArrayList<>();
 
     public Comment(Post post, Member member, String commentContents) {
         this.post = post;

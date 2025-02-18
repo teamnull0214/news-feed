@@ -22,35 +22,35 @@ public class PostSortController {
 
     private final PostSortService postSortService;
 
-    /* 유저 한명의 전체 게시글 조회 (수정일자 기준 최신순) *//*
+     /*유저 한명의 전체 게시글 조회 (수정일자 기준 최신순)*/
     @GetMapping("/sorted-by-modified")
     public ResponseEntity<List<PostResponseDto>> findPostsSortedByModifiedAt(
             @PathVariable Long memberId,
-            @RequestParam(required = false) String startDate ,
-            @RequestParam(required = false) String endDate
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
 
     ) {
         List<PostResponseDto> postResponseDtoList = postSortService.findPostsSortedByModified(memberId,startDate, endDate);
         return ResponseEntity.ok(postResponseDtoList);
     }
 
-    *//* 유저 한명의 전체 게시글 조회 (등록일자 기준 최신순) *//*
+     /*유저 한명의 전체 게시글 조회 (등록일자 기준 최신순)*/
     @GetMapping("/sorted-by-created")
     public ResponseEntity<List<PostResponseDto>> findPostsSortedByCreatedAt(
             @PathVariable Long memberId,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
     ) {
         List<PostResponseDto> postResponseDtoList = postSortService.findPostsSortedByCreatedAt(memberId,startDate, endDate);
         return ResponseEntity.ok(postResponseDtoList);
-    }*/
+    }
 
     /* 유저 한명의 전체 게시글 조회 (좋아요 많은 순) */
     @GetMapping("/sorted-by-likes")
     public ResponseEntity<List<PostResponseDto>> findPostsSortedByLike(
             @PathVariable Long memberId,
-            @RequestParam String startDate,
-            @RequestParam String endDate
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
     ) {
         List<PostResponseDto> postResponseDtoList = postSortService.findPostsSortedByLIKE(memberId,startDate, endDate);
         return ResponseEntity.ok(postResponseDtoList);

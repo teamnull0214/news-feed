@@ -1,23 +1,17 @@
 package com.example.newsfeed.global.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.List;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponseDto <T>{
+public class ValidationFailedResponseDto <T> implements ApiResponseDto<T> {
 
-    private final Integer statusCode;
+    private T message;
 
-    private final List<String> message;
-
-    private final T data;
-
-    public static <T> ApiResponseDto <T> validationFalied(Integer statusCode, List<String> message) {
-        return new ApiResponseDto<>(statusCode,message,null);
+    @Override
+    public void validationFalied(T message) {
+        this.message = message;
     }
 }

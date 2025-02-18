@@ -2,9 +2,7 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.global.exception.custom.ConflictException;
-import com.example.newsfeed.global.exception.custom.ForbiddenException;
-import com.example.newsfeed.global.exception.custom.NotFoundException;
+import com.example.newsfeed.global.exception.custom.*;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
@@ -15,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
-
 import static com.example.newsfeed.global.exception.ErrorCode.*;
 
 
@@ -28,6 +24,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    /*todo: 각 서비스단 성공 응답 만들기*/
 
     @Transactional
     public MemberResponseDto createMember(
@@ -69,6 +67,7 @@ public class MemberService {
                 savedMember.getCreatedAt()
         );
     }
+
 
     @Transactional
     public UpdateMemberProfileResponseDto profileUpdate(SessionMemberDto session, UpdateMemberProfileRequestDto requestDto) {

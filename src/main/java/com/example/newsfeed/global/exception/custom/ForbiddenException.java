@@ -1,8 +1,10 @@
 package com.example.newsfeed.global.exception.custom;
 
 import com.example.newsfeed.global.exception.ErrorCode;
+import org.springframework.http.HttpStatus;
 
-public class ForbiddenException {
+public class ForbiddenException{
+
     /*비밀번호 불일치 예외*/
     public static class PasswordMismatchException extends CustomException {
         public PasswordMismatchException(ErrorCode errorCode) {
@@ -26,8 +28,9 @@ public class ForbiddenException {
 
     /*탈퇴한 유저 예외*/
     public static class MemberDeactivedException extends CustomException {
-      public MemberDeactivedException(ErrorCode errorcode) {
-        super(errorcode);
-      }
+        public MemberDeactivedException(ErrorCode errorcode) {
+            super(errorcode);
+        }
     }
+
 }

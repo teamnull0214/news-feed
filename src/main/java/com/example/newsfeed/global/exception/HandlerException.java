@@ -1,6 +1,7 @@
 package com.example.newsfeed.global.exception;
 
 import com.example.newsfeed.global.exception.custom.CustomException;
+import com.example.newsfeed.global.exception.custom.ForbiddenException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,4 +45,6 @@ public class HandlerException {
         /*상태 코드와 유효성 검증에 실패한 필드의 default message 응답*/
         return ResponseEntity.status(exception.getStatusCode()).body(errorResponseDto);
     }
+
+    /*todo: 런타입 에러도 추가하기*/
 }

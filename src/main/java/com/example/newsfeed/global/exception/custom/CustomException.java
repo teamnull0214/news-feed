@@ -1,19 +1,18 @@
 package com.example.newsfeed.global.exception.custom;
 
 import com.example.newsfeed.global.exception.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@AllArgsConstructor
 public class CustomException extends RuntimeException {
+    private final HttpStatus statusCode;
 
-    final private HttpStatus statusCode;
-
-    final private String message;
+    private final String message;
     public CustomException(ErrorCode errorCode) {
         this.statusCode = errorCode.getStatusCode();
         this.message = errorCode.getMessage();
     }
+
+    /*todo: 각 예외 클래스 static에서 그냥 class로 변경*/
 }

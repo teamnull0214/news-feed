@@ -1,14 +1,14 @@
 package com.example.newsfeed.post.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.time.LocalDateTime;
 
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.member.entity.Member;
 
-
-
 @Getter
+@AllArgsConstructor
 public class PostResponseDto {
 
     // feat/post-create 브랜치에서 만든 변수
@@ -17,37 +17,9 @@ public class PostResponseDto {
     private final String image;
     private final String contents; // 누락된 contents 추가
     private final int likeCount;
+    private final int commentCount;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
-
-
-    /*
-    feat/post-create 브랜치에서 만든 생성자
-    contents가 누락되어 있습니다
-    public PostResponseDto(Long id, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt){
-        this.id = id;
-        this.nickname = nickname;
-        this.image = image;
-        this.contents = contents;
-        }
-    }
-    */
-
-
-    /*
-    feat/post-read 브랜치
-    PostResponseDto 생성자
-    */
-    public PostResponseDto(Long id, String nickname, String contents, String image, int likeCount, LocalDateTime createdAt, LocalDateTime modifiedAt){
-        this.id = id;
-        this.nickname = nickname;
-        this.contents = contents;
-        this.image = image;
-        this.likeCount = likeCount;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
-    }
-
 
     /*
     feat/post-read 브랜치
@@ -62,6 +34,7 @@ public class PostResponseDto {
                 post.getContents(),
                 post.getImage(),
                 post.getPostLikeList().size(),
+                post.getCommentList().size(),
                 post.getCreatedAt(),
                 post.getModifiedAt()
         );

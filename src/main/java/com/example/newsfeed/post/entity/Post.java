@@ -1,5 +1,7 @@
 package com.example.newsfeed.post.entity;
 
+import com.example.newsfeed.comment.dto.CommentResponseDto;
+import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.global.entity.BaseDateTime;
 import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.member.entity.Member;
@@ -33,6 +35,9 @@ public class Post extends BaseDateTime {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<PostLike> postLikeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Comment> commentList = new ArrayList<>();
 
     public Post(String image, String contents, Member member) {
         this.image = image;

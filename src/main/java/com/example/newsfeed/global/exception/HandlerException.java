@@ -1,5 +1,6 @@
 package com.example.newsfeed.global.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -7,8 +8,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
-import static com.example.newsfeed.global.exception.ApiResponseDto.validationFalied;
 
+import static com.example.newsfeed.global.exception.ApiResponseDto.validationFailed;
+
+@Hidden
 @Slf4j
 @RestControllerAdvice
 public class HandlerException {
@@ -22,6 +25,6 @@ public class HandlerException {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .toList();
 
-        return ResponseEntity.badRequest().body(validationFalied(exception.getStatusCode().value(), validFailedList));
+        return ResponseEntity.badRequest().body(validationFailed(exception.getStatusCode().value(), validFailedList));
     }
 }

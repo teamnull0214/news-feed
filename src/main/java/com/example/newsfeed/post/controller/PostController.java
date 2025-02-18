@@ -30,7 +30,7 @@ public class PostController {
     // 게시물 생성 (로그인 상태)
     @LoginRequired
     @PostMapping
-    public ResponseEntity<PostCreateResponseDto> createPost(
+    public ResponseEntity<PostResponseDto> createPost(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @Valid @RequestBody PostCreateRequestDto requestDto
     ) {

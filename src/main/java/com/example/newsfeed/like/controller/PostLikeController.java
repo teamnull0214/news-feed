@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PostLikeController implements LikeController{
 
-    @Autowired
     @Qualifier("postLikeService")
     private final PostLikeService postLikeService;
 

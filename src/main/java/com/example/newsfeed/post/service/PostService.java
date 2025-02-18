@@ -4,12 +4,10 @@ import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import com.example.newsfeed.post.dto.PostCreateRequestDto;
-import com.example.newsfeed.post.dto.PostCreateResponseDto;
 import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
-    public PostCreateResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
+    public PostResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
         Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
                 () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
         );
@@ -35,14 +33,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         log.info("게시물 생성 성공");
-        return new PostCreateResponseDto(
-                savedPost.getId(),
-                member.getNickname(),
-                savedPost.getContents(),
-                savedPost.getImage(),
-                savedPost.getCreatedAt(),
-                savedPost.getModifiedAt()
-        );
+        return PostResponseDto.toDto(savedPost);
     }
 
     /*

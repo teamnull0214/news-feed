@@ -9,6 +9,8 @@ import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -215,29 +217,30 @@ public class MemberService {
     }
 
 
+     /*
+       feat/member-read
+       본인 유저 프로필 조회 메서드
+       MemberController.java -> findMyMember 메서드 상단에 @LoginRequired custom annotaion으로 로그인 세션이
+       null이면(즉 로그인을 안한 비회원 상태라면) 해당 기능에 접근을 막아 해당 코드에서 예외처리를 따로 안해도 된다.
+    */
+    public FindMyMemberDto findMyMember(HttpServletRequest httpServletRequest){
+
+        // 현재 로그인 세션을 얻기
+        HttpSession session = httpServletRequest.getSession(false);
+        SessionMemberDto currMemberSession = (SessionMemberDto) session.getAttribute("member");
 
 
-    /*
-    feat/member-read
-    본인 유저 프로필 조회 메서드
-
-    만드는중입니당 underconstruction!!
-     */
-    public FindMyMemberDto findMyMember(){
-
-        // 로그인 세션에서 본인 memberId받아서 밑에 넣는 코드 만들꺼임
-        Optional<Member> optionalMember = memberRepository.findActiveMemberById(memberId);
+        // 획득한 로그인 세션에서 본인 memberId를 통해 DB에서 유저프로필 조회
+        Optional<Member> optionalMember = memberRepository.findActiveMemberById(currMemberSession.getId());
 
         /*
-        본인 유저프로필을 조회하는대 다른사람 memberId를 조회할리도 없고
-        예외처리 만들어봤자 시간낭비라서 안만듦ㅋ
+        MemberController.java -> findMyMember 메서드 상단에 @LoginRequired custom annotaion으로 로그인 세션이
+        null이면(즉 로그인을 안한 비회원 상태라면) 메서드 실행을 막아 현재 이 코드에서 예외처리를 따로 안해도 된다.
          */
 
-        Member findMyMember = optionalMember.get(); // 내 유저 프로필이니깐 isPresent()로 검사 안해도 됨
-        return new FindMyMemberDto(findMyMember.getId(), findMyMember.getNickname(), findMyMember.getEmail(), findMyMember.getInfo(), findMyMember.getMbti(), findMyMember.getCreatedAt());
-
+        Member findMyMember = optionalMember.get(); // 내 유저 프로필이니깐 isPresent()로 검사 안해도 상관없다
+        return new FindMyMemberDto(findMyMember.getId(),findMyMember.getUsername(), findMyMember.getNickname(), findMyMember.getEmail(), findMyMember.getInfo(), findMyMember.getMbti(), findMyMember.getCreatedAt(), findMyMember.getModifiedAt());
     }
-
 
 
 }

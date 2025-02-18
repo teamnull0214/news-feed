@@ -85,7 +85,6 @@ public class MemberController {
     /*
     feat/member-read 브랜치
     다른사람의 멤버프로필을 조회하는 메서드
-
      */
     @GetMapping("/{memberId}")
     public ResponseEntity<FindMemberDto> findMemberById(@PathVariable Long memberId)
@@ -99,17 +98,16 @@ public class MemberController {
     /*
     feat/member-read 브랜치
     본인의 멤버프로필을 조회하는 메서드
-
+    현재 로그인한 http세션을 서비스단에 전달한다
      */
+    @LoginRequired // 로그인을 안하면 LoginIntercepter.java 클래스를 통해 예외 발생 throw new RuntimeException("로그인 필요")
     @GetMapping
-    public ResponseEntity<FindMyMemberDto> findMyMember()
+    public ResponseEntity<FindMyMemberDto> findMyMember(HttpServletRequest httpServletRequest)
     {
-        FindMyMemberDto findMyMemberDto = memberService.findMyMember();
+        FindMyMemberDto findMyMemberDto = memberService.findMyMember(httpServletRequest);
 
-        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK);
+        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK); // status 200
     }
-
-
 
 
 }

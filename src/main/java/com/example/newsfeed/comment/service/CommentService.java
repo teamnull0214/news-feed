@@ -53,9 +53,7 @@ public class CommentService {
     // 댓글수정
     @Transactional
     public CommentUpdateResponseDto updateComment(SessionMemberDto session, Long postId, Long commentId, CommentUpdateRequestDto requestDto) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new RuntimeException("해당 댓글이 없습니다.")
-        );
+        Comment comment = findCommentByIdOrElseThrow(commentId);
         // 댓글을 단 게시물 찾기
         Post post = postService.findPostByIdOrElseThrow(postId);
 
@@ -77,6 +75,7 @@ public class CommentService {
     }
 
     // 댓글 조회
+
     @Transactional(readOnly = true)
     public List<CommentResponseDto> findByComment(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
@@ -95,12 +94,17 @@ public class CommentService {
     // 해당 댓글 삭제
     @Transactional
     public void deleteComment(SessionMemberDto session, Long postId, Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new RuntimeException("해당 댓글이 존재하지 않습니다.")
-        );
+        Comment comment = findCommentByIdOrElseThrow(commentId);
+
         if(!comment.getMember().getId().equals(postId)){
             throw new RuntimeException("본인이 작성한 댓글만 삭제할 수 있습니다.");
         }
         commentRepository.delete(comment);
+    }
+
+    public Comment findCommentByIdOrElseThrow(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new RuntimeException("해당 댓글이 없습니다.")
+        );
     }
 }

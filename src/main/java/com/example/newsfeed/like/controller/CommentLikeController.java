@@ -1,8 +1,8 @@
 package com.example.newsfeed.like.controller;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.like.service.CommentLikeService;
 import com.example.newsfeed.like.service.LikeService;
-import com.example.newsfeed.like.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,31 +11,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/comments")
 @RequiredArgsConstructor
-public class PostLikeController implements LikeController{
+public class CommentLikeController implements LikeController{
 
     @Autowired
-    @Qualifier("postLikeService")
-    private final PostLikeService postLikeService;
+    @Qualifier("commentLikeService")
+    private final CommentLikeService commentLikeService;
 
     @Override
-    @PostMapping("/{postId}/likes")
+    @PostMapping("/{commentId}/likes")
     public ResponseEntity<Void> createLike(
-            @PathVariable Long postId,
+            @PathVariable Long commentId,
             @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        postLikeService.createLike(session.getId(), postId);
+        commentLikeService.createLike(session.getId(), commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
-    @DeleteMapping("/{postId}/likes")
+    @DeleteMapping("/{commentId}/likes")
     public ResponseEntity<Void> deleteLike(
-            @PathVariable Long postId,
+            @PathVariable Long commentId,
             @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        postLikeService.deleteLike(session.getId(), postId);
+        commentLikeService.deleteLike(session.getId(), commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

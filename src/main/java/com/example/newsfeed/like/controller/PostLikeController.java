@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/like/posts")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostLikeController implements LikeController{
 
     private final LikeService likeService;
 
     @Override
-    @PostMapping("/{postId}")
+    @PostMapping("/{postId}/likes")
     public ResponseEntity<Void> createLike(
             @PathVariable Long postId,
             @SessionAttribute(name = "member") SessionMemberDto session
@@ -25,7 +25,7 @@ public class PostLikeController implements LikeController{
     }
 
     @Override
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/{postId}/likes")
     public ResponseEntity<Void> deleteLike(
             @PathVariable Long postId,
             @SessionAttribute(name = "member") SessionMemberDto session

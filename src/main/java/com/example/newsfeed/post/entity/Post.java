@@ -31,7 +31,7 @@ public class Post extends BaseDateTime {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<PostLike> postLikeList = new ArrayList<>();
 
     public Post(String image, String contents, Member member) {

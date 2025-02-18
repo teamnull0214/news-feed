@@ -3,11 +3,13 @@ package com.example.newsfeed.member.entity;
 import com.example.newsfeed.global.entity.BaseDateTime;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Entity
 @Table(name = "members")
+@NoArgsConstructor
 public class Member extends BaseDateTime {
 
     @Id
@@ -33,9 +35,6 @@ public class Member extends BaseDateTime {
     @ColumnDefault("false")
     private boolean isDeleted;
 
-    public Member() {
-
-    }
 
     public Member(String username, String nickname, String email) {
         this.username = username;
@@ -43,12 +42,22 @@ public class Member extends BaseDateTime {
         this.email = email;
     }
 
+    // 로그인에 사용
     public Member(String username, String nickname, String email, String password) {
         this.username = username;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
     }
+
+    // 세션을 entity로(회원 프로필 수정) --> 안씀
+    public Member(Long id, String username, String nickname, String email) {
+        this.id = id;
+        this.username = username;
+        this.nickname = nickname;
+        this.email = email;
+    }
+
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
@@ -70,18 +79,18 @@ public class Member extends BaseDateTime {
         this.id = id;
     }
 
-    public static Member fromMemberId(Long id){
-        return new Member(id);
-    }
 
-    // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문에 필요한 메서드(2개)
+    // Member 프로필 수정
+    // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문에 필요한 메서드
     public void updateInfo(String info) {
         this.info = info;
     }
-
     public void updateMbti(String mbti) {
         this.mbti = mbti;
     }
-
+    public void updateUsernameAndNickname(String username, String nickname) {
+        this.username = username;
+        this.nickname = nickname;
+    }
 
 }

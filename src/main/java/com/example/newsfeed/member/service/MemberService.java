@@ -2,10 +2,11 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.request.MemberRequestDto;
+import com.example.newsfeed.member.dto.response.MemberResponseDto;
+import com.example.newsfeed.member.dto.response.MemberUpdateProfileResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
+import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,86 +22,53 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public MemberResponseDto createMember(
-            String name,
-            String nickName,
-            String email,
-            String password,
-            String passwordCheck
-    ) {
+    public MemberResponseDto createMember(MemberRequestDto dto) {
 
         /*password와 passwordCheck가 일치하지 않는 경우*/
-        if (!password.equals(passwordCheck)) {
+        if (!dto.getPassword().equals(dto.getPasswordCheck())) {
             throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
         }
 
-        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(email);
-
+        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(dto.getEmail());
         if (memberByEmail.isPresent()) {
             Member findMember = memberByEmail.get();
 
             if(findMember.isDeleted()) {
                 throw new RuntimeException("탈퇴한 유저입니다.");
             }
-
             throw new RuntimeException("이미 존재하는 회원입니다.");
         }
 
         /*member 객체 생성 및 비밀번호 암호화*/
-        Member member = new Member(name, nickName, email, passwordEncoder.encode(password));
-        Member savedMember = memberRepository.save(member);
+        Member member = dto.toEntity();
+        memberRepository.save(member);
 
         log.info("유저 회원가입 성공");
-
-        return new MemberResponseDto(
-                savedMember.getId(),
-                savedMember.getUsername(),
-                savedMember.getNickname(),
-                savedMember.getEmail(),
-                savedMember.getCreatedAt()
-        );
+        return MemberResponseDto.toDto(member);
     }
 
     @Transactional
-    public UpdateMemberProfileResponseDto profileUpdate(SessionMemberDto session, UpdateMemberProfileRequestDto requestDto) {
-        Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
-                () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
-        );
+    public MemberUpdateProfileResponseDto profileUpdate(SessionMemberDto session, MemberUpdateProfileRequestDto dto) {
+
+        Member member = findActiveMemberByIdOrElseThrow(session.getId());
+
+        String updatedUsername = (dto.getUsername() != null) ? dto.getUsername() : member.getUsername();
+        String updatedNickname = (dto.getNickname() != null) ? dto.getNickname() : member.getNickname();
+        member.updateUsernameAndNickname(updatedUsername, updatedNickname);
 
         // info, mbti 따로 업데이트 할 수 있게 만들어주는 조건문
         // info, mbti 요청값이 없으면 이전에 있던 info,mbti 값 그대로 출력
-        if(requestDto.getInfo() != null){
-            member.updateInfo(requestDto.getInfo());
+        if(dto.getInfo() != null){
+            member.updateInfo(dto.getInfo());
         }
-        if(requestDto.getMbti() != null){
-            member.updateMbti(requestDto.getMbti());
+        if(dto.getMbti() != null){
+            member.updateMbti(dto.getMbti());
         }
-        // 프로필 수정 저장하는 쿼리
-        Member savedMember = memberRepository.save(member);
-
-        // 프로필 수정
-        member.profileUpdate(
-                requestDto.getUsername(),
-                requestDto.getNickname(),
-                savedMember.getInfo(),
-                savedMember.getMbti()
-        );
 
         log.info("프로필 수정 성공");
-
-        return new UpdateMemberProfileResponseDto(
-                member.getId(),
-                member.getUsername(),
-                member.getNickname(),
-                member.getEmail(),
-                member.getInfo(),
-                member.getMbti(),
-                member.getCreatedAt(),
-                member.getModifiedAt()
-        );
+        return MemberUpdateProfileResponseDto.toDto(member);
     }
 
     @Transactional
@@ -109,7 +77,7 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
         /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
-        if(!passwordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
+        if(!PasswordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -124,7 +92,7 @@ public class MemberService {
         }
 
         /*비밀번호 암호화 후 업데이트*/
-        findMember.updatePassword(passwordEncoder.encode(dto.getNewPassword()));
+        findMember.updatePassword(PasswordEncoder.encode(dto.getNewPassword()));
 
         log.info("비밀번호 수정 성공");
     }
@@ -133,7 +101,7 @@ public class MemberService {
     public void deleteMember(SessionMemberDto sessionMemberDto, String password) {
         Member findMember = findActiveMemberByEmailOrElseThrow(sessionMemberDto.getEmail());
 
-        if (!passwordEncoder.matches(password, findMember.getPassword())) {
+        if (!PasswordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
         }
 
@@ -168,7 +136,7 @@ public class MemberService {
 
         Member findMember = findActiveMemberByEmailOrElseThrow(email);
 
-        if (!passwordEncoder.matches(password, findMember.getPassword())) {
+        if (!PasswordEncoder.matches(password, findMember.getPassword())) {
             throw new RuntimeException("비밀번호가 불일치");
         }
 

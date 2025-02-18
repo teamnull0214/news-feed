@@ -2,12 +2,12 @@ package com.example.newsfeed.member.controller;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.MemberRequestDto;
-import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.request.MemberRequestDto;
+import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.dto.deleteRequestDto;
+import com.example.newsfeed.member.dto.response.MemberUpdateProfileResponseDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
+import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -32,24 +32,23 @@ public class MemberController {
             @Valid @RequestBody MemberRequestDto dto
     ) {
         log.info("회원가입 API 호출");
-        return new ResponseEntity<>(memberService.createMember(
-                dto.getName(),
-                dto.getNickname(),
-                dto.getEmail(),
-                dto.getPassword(),
-                dto.getPasswordCheck()
-        ), HttpStatus.CREATED);
+        return new ResponseEntity<>(memberService.createMember(dto), HttpStatus.CREATED);
     }
 
     // (본인)유저 프로필 수정
     @LoginRequired
     @PatchMapping("/profile")
-    public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
+    public ResponseEntity<MemberUpdateProfileResponseDto> profileUpdate(
             @SessionAttribute(name = "member") SessionMemberDto session,
-            @Valid @RequestBody UpdateMemberProfileRequestDto requestDto
+            @Valid @RequestBody MemberUpdateProfileRequestDto dto,
+            HttpServletRequest httpServletRequest
     ){
+        if (dto.getNickname() != null) {
+            HttpSession httpSession = httpServletRequest.getSession(false);
+            httpSession.setAttribute("member", session.setNickname(dto.getNickname()));
+        }
         log.info("유저 프로필 수정");
-        return ResponseEntity.ok(memberService.profileUpdate(session,requestDto));
+        return ResponseEntity.ok(memberService.profileUpdate(session, dto));
     }
 
     /*유저의 비밀번호 업데이트*/

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.post.dto.PostCreateRequestDto;
 import com.example.newsfeed.post.dto.PostCreateResponseDto;

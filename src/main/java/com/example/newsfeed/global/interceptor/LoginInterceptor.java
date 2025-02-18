@@ -30,7 +30,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (isLoginRequired(handlerMethod)) {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("member") == null) {
-                throw
+            throw new UnauthorizedException.LoginRequiredException(LOGIN_REQUIRED);
             }
             SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute("member");
             log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",

@@ -34,12 +34,13 @@ public class Post extends BaseDateTime {
     }
 
     public Post() {
-
     }
-    //feat/post-updateDelete
-    //포스트 업데이트
-    public void updateImageAndContent(String image, String content) {
+
+    public void updateImage(String image) {
         this.image = image;
-        this.contents = content;
+    }
+
+    public void updateContents(String contents) {
+        this.contents = contents;
     }
 }

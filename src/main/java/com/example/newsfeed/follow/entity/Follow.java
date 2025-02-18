@@ -40,4 +40,8 @@ public class Follow extends BaseDateTime{
         this.followingMember = followingMember;
         this.followStatus = FollowStatus.FOLLOWING;
     }
+
+    public void updateFollowStatus(FollowStatus followStatus) {
+        this.followStatus = followStatus;
+    }
 }

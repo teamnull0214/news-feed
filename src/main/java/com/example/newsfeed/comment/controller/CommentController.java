@@ -35,8 +35,8 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findByPost(@PathVariable Long postId){
-        return ResponseEntity.ok(commentService.findByPost(postId));
+    public ResponseEntity<List<CommentResponseDto>> findByComment(@PathVariable Long postId){
+        return ResponseEntity.ok(commentService.findByComment(postId));
     }
 
 
@@ -55,12 +55,12 @@ public class CommentController {
     // 해당 댓글 삭제
     @LoginRequired
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteById(
+    public ResponseEntity<Void> deleteComment(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @PathVariable Long postId,
             @PathVariable Long commentId
     ){
-        commentService.deleteById(session, postId, commentId);
+        commentService.deleteComment(session, postId, commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

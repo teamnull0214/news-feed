@@ -36,7 +36,7 @@ public class CommentService {
         // 댓글을 다는 게시물 찾기
         Post post = postService.findPostByIdOrElseThrow(postId);
         // 로그인 본인 맞는경우 댓글 작성 가능
-        Member member = memberService.findMemberByIdOrElseThrow(session.getId());
+        Member member = new Member(session.getId());
         Comment comment = new Comment(post, member, requestDto.getCommentContents());
         commentRepository.save(comment);
         return new CommentCreateResponseDto(
@@ -78,7 +78,7 @@ public class CommentService {
 
     // 댓글 조회
     @Transactional(readOnly = true)
-    public List<CommentResponseDto> findByPost(Long postId) {
+    public List<CommentResponseDto> findByComment(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
 
         return comments.stream()
@@ -94,7 +94,7 @@ public class CommentService {
     }
     // 해당 댓글 삭제
     @Transactional
-    public void deleteById(SessionMemberDto session, Long postId, Long commentId) {
+    public void deleteComment(SessionMemberDto session, Long postId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new RuntimeException("해당 댓글이 존재하지 않습니다.")
         );

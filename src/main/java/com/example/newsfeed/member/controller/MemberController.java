@@ -42,13 +42,14 @@ public class MemberController {
     }
 
     // (본인)유저 프로필 수정
-    @PatchMapping("/{memberId}/profile")
+    @LoginRequired
+    @PatchMapping("/profile")
     public ResponseEntity<UpdateMemberProfileResponseDto> profileUpdate(
-            @PathVariable Long memberId,
+            @SessionAttribute(name = "member") SessionMemberDto session,
             @Valid @RequestBody UpdateMemberProfileRequestDto requestDto
     ){
         log.info("유저 프로필 수정");
-        return ResponseEntity.ok(memberService.profileUpdate(memberId,requestDto));
+        return ResponseEntity.ok(memberService.profileUpdate(session,requestDto));
     }
 
     /*유저의 비밀번호 업데이트*/

@@ -72,7 +72,7 @@ public class PostService {
         Post findPost = findPostByIdOrElseThrow(postId);
         Member findPostMembers = findPost.getMember();
 
-        if (!Objects.equals(memberId, findPostMembers.getId())) {
+        if (Objects.equals(memberId, findPostMembers.getId())) {
             throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
         }
 
@@ -94,7 +94,7 @@ public class PostService {
         Post findPost = findPostByIdOrElseThrow(postId);
         Member findPostMembers = findPost.getMember();
 
-        if (!Objects.equals(memberId, findPostMembers.getId())) {
+        if (Objects.equals(memberId, findPostMembers.getId())) {
             throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
         }
         if (!postRepository.existsById(postId)) {

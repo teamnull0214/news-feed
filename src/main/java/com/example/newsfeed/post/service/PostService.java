@@ -9,6 +9,7 @@ import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

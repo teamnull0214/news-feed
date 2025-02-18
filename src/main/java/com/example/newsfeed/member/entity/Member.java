@@ -66,7 +66,7 @@ public class Member extends BaseDateTime {
         this.mbti = mbti;
     }
 
-    private Member(Long id){
+    public Member(Long id){
         this.id = id;
     }
 

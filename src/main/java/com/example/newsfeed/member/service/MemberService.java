@@ -65,8 +65,8 @@ public class MemberService {
     }
 
     @Transactional
-    public UpdateMemberProfileResponseDto profileUpdate(Long memberId, UpdateMemberProfileRequestDto requestDto) {
-        Member member = memberRepository.findMemberById(memberId).orElseThrow(
+    public UpdateMemberProfileResponseDto profileUpdate(SessionMemberDto session, UpdateMemberProfileRequestDto requestDto) {
+        Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
                 () -> new RuntimeException("id와 일치하는 유저가 없습니다.")
         );
 

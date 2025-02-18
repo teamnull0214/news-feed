@@ -3,6 +3,7 @@ package com.example.newsfeed.follow.service;
 import com.example.newsfeed.follow.entity.Follow;
 import com.example.newsfeed.follow.entity.FollowStatus;
 import com.example.newsfeed.follow.repository.FollowRepository;
+import com.example.newsfeed.member.dto.MemberListResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -59,6 +62,15 @@ public class FollowService {
         }
 
         findFollow.updateFollowStatusFalse();
+    }
+
+    public List<MemberListResponseDto> findAllFollowerMembers(Long id) {
+        List<Follow> followList = followRepository.findByFollowerMemberId(id);
+
+        return followList.stream()
+                .filter(follow -> follow.getFollowStatus() == FollowStatus.FOLLOWING)
+                .map(follow -> new MemberListResponseDto(follow.getFollowingMember()))
+                .toList();
     }
 
     private Follow findFollowByFollowerMemberAndFollowingMemberOrElseThrow(Member followerMember, Member followingMember) {

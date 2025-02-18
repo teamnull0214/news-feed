@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -26,16 +23,9 @@ public class FollowController {
     @PostMapping("/{memberId}")
     public ResponseEntity<Void> createFollow(
             @PathVariable Long memberId,
-            HttpServletRequest httpServletRequest
+            @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        Long followerId = getMemberIdBySession(httpServletRequest);
-        followService.createFollow(followerId, memberId);
+        followService.createFollow(session.getId(), memberId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private Long getMemberIdBySession(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession(false);
-        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
-        return sessionMemberDto.getId();
     }
 }

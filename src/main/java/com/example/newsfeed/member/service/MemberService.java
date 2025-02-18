@@ -3,6 +3,7 @@ package com.example.newsfeed.member.service;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.findmemberdto.FindMemberDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
@@ -10,8 +11,10 @@ import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -153,4 +156,32 @@ public class MemberService {
 
         return findMember;
     }
+
+    /*
+    feat/member-read
+    멤버 id로 유저 프로필 조회
+     */
+    public FindMemberDto findMemberById(Long memberId){
+
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+
+        // 조회에 실패할 경우
+        if(optionalMember.isEmpty()){
+            // status 404 Not Found
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 id값을 갖는 유저는 존재하지 않습니다.");
+        }
+
+        Member findMember = optionalMember.get();
+
+        return new FindMemberDto(findMember.getId(), findMember.getNickname(), findMember.getEmail(), findMember.getInfo(), findMember.getMbti(), findMember.getCreatedAt());
+
+    }
+
+
+
+
+
+
+
+
 }

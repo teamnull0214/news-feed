@@ -5,6 +5,7 @@ import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.MemberRequestDto;
 import com.example.newsfeed.member.dto.MemberResponseDto;
 import com.example.newsfeed.member.dto.deleteRequestDto;
+import com.example.newsfeed.member.dto.findmemberdto.FindMemberDto;
 import com.example.newsfeed.member.dto.updatePasswordRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
 import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
@@ -78,4 +79,23 @@ public class MemberController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+    /*
+    feat/member-read 브랜치
+    본인이나 다른사람의 유저프로필을 조회하는 메서드
+
+     */
+    @GetMapping("/{memberId}")
+    public ResponseEntity<FindMemberDto> findMemberById(@PathVariable Long memberId)
+    {
+        FindMemberDto findMemberDto = memberService.findMemberById(memberId);
+
+        return new ResponseEntity<>(findMemberDto, HttpStatus.OK);
+    }
+
+
+
+
+
 }

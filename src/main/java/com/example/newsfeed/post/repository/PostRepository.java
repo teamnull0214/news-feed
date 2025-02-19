@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,7 +27,7 @@ public interface PostRepository  extends JpaRepository<Post, Long> {
             "WHERE p.member.id = :memberId " +
             "AND FUNCTION('DATE', p.createdAt) BETWEEN :startDate AND :endDate " +
             "ORDER BY p.modifiedAt")
-    List<Post> findAllByModifiedAt(
+    List<Post> findAllByMemberIdAndModifiedAt(
             @Param("memberId") Long memberId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
@@ -38,7 +37,7 @@ public interface PostRepository  extends JpaRepository<Post, Long> {
             "WHERE p.member.id = :memberId " +
             "AND FUNCTION('DATE', p.createdAt) BETWEEN :startDate AND :endDate " +
             "ORDER BY p.createdAt")
-    List<Post> findAllByCreatedAt(
+    List<Post> findAllByMemberIdAndCreatedAt(
             @Param("memberId") Long memberId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
@@ -49,8 +48,17 @@ public interface PostRepository  extends JpaRepository<Post, Long> {
             "WHERE p.member.id = :memberId " +
             "AND FUNCTION('DATE', p.createdAt) BETWEEN :startDate AND :endDate " +
             "ORDER BY SIZE(p.postLikeList) DESC")
-    List<Post> findAllByLike(
+    List<Post> findAllByMemberIdAndLike(
             @Param("memberId") Long memberId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /*유저 아이디가 포함되지 않은 게시물 전체 조회*/
+    @Query("SELECT p FROM Post p " +
+            "WHERE p.member.id = :memberId " +
+            "AND FUNCTION('DATE', p.createdAt) BETWEEN :startDate AND :endDate ")
+    List<Post> findAllByModifiedAt(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );

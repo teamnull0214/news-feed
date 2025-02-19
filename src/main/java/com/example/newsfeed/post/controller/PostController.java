@@ -49,8 +49,18 @@ public class PostController {
     public ResponseEntity<PostResponseDto> findPostById(@PathVariable Long postId) {
 
         PostResponseDto postResponseDto = postService.findById(postId);
-
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK); // status 200
+    }
+
+    /*todo: 페이징 구현 후 정렬하면 될 것 같습니다.*/
+    /*게시물 전체 조회*/
+    @GetMapping("/sorted-by-created")
+    public ResponseEntity<List<PostResponseDto>> findPostsSortedByModified(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+    ) {
+        List<PostResponseDto> postResponseDtoList = postService.findPostsSortedByModifiedAt(startDate, endDate);
+        return ResponseEntity.ok(postResponseDtoList);
     }
 
     //feat/post-updateDelete
@@ -81,5 +91,4 @@ public class PostController {
         HttpSession session = httpServletRequest.getSession(false);
         return (Long) session.getAttribute("memberId");
     }
-
 }

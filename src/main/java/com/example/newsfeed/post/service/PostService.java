@@ -2,7 +2,7 @@ package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
-import com.example.newsfeed.member.repository.MemberRepository;
+import com.example.newsfeed.member.service.MemberService;
 import com.example.newsfeed.post.dto.PostCreateRequestDto;
 import com.example.newsfeed.post.dto.PostCreateResponseDto;
 import com.example.newsfeed.post.dto.PostUpdateRequestDto;
@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Collections;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,12 +25,11 @@ import java.util.Objects;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public PostCreateResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
-        Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
-                () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
-        );
+        Member member = memberService.findActiveMemberByIdOrElseThrow(session.getId());
+
         Member findMember = Member.fromMemberId(session.getId());
         Post post = new Post(requestDto.getImage(), requestDto.getContents(), findMember);
         Post savedPost = postRepository.save(post);
@@ -45,14 +45,17 @@ public class PostService {
         );
     }
 
-    /*
-    feat/post-read 브랜치
-    모든 작성글을 찾는 서비스 JpaRepository에 스트림
-    */
+    /*todo: 페이징을 통해 정렬만 진행 하시면 될 것 같아요.*/
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAll() {
-        return postRepository.findAll().stream().map(PostResponseDto::toDto).toList();
+    public List<PostResponseDto> findPostsSortedByModifiedAt(LocalDate startDate, LocalDate endDate) {
+
+        return postRepository.findAllByModifiedAt(startDate, endDate)
+                .stream()
+                .map(PostResponseDto::toDto)
+                .toList();
     }
+
+    /*todo: 등록일과 좋아요에 대한 부분도 동일하게 진행하면 될 것같습니다.*/
 
     /*
     feat/post-read 브랜치

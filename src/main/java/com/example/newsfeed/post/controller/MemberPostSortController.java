@@ -19,7 +19,8 @@ public class MemberPostSortController {
 
     private final MemberPostSortService memberPostSortService;
 
-     /*유저 한명의 전체 게시글 조회 (수정일자 기준 최신순)*/
+    /*todo: 각 조회마다 페이지네이션 적용하기*/
+    /*유저 한명의 전체 게시글 조회 (수정일자 기준 최신순)*/
     @GetMapping("/sorted-by-modified")
     public ResponseEntity<List<PostResponseDto>> findPostsSortedByModifiedAt(
             @PathVariable Long memberId,

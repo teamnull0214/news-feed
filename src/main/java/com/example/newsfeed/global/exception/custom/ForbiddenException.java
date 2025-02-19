@@ -31,4 +31,11 @@ public class ForbiddenException{
             super(errorcode);
         }
     }
+
+    /*다른 사람의 정보를 수정 및 삭제 하려는 경우*/
+    public static class MemberAccessDeniedException extends CustomException {
+        public MemberAccessDeniedException(ErrorCode errorcode) {
+            super(errorcode);
+        }
+    }
 }

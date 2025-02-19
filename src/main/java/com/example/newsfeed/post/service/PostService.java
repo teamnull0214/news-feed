@@ -1,13 +1,8 @@
 package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.dto.SessionMemberDto;
-import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.dto.PostRequestDto;
-import com.example.newsfeed.member.service.MemberService;
-import com.example.newsfeed.post.dto.PostCreateRequestDto;
-import com.example.newsfeed.post.dto.PostCreateResponseDto;
-import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
@@ -21,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
 
 @Slf4j
 @Service("postService")
@@ -42,20 +38,10 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostResponseDto> findAllPost(int page, int size) {
-    /*todo: 페이징을 통해 정렬만 진행 하시면 될 것 같아요.*/
-    @Transactional(readOnly = true)
-    public List<PostResponseDto> findPostsSortedByModifiedAt(LocalDate startDate, LocalDate endDate) {
-
-        return postRepository.findAllByModifiedAt(startDate, endDate)
-                .stream()
-                .map(PostResponseDto::toDto)
-                .toList();
-    }
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
         Page<Post> postPage = postRepository.findAll(pageable);
-    /*todo: 등록일과 좋아요에 대한 부분도 동일하게 진행하면 될 것같습니다.*/
 
         List<PostResponseDto> dtoList = postPage.getContent().stream()
                 .map(PostResponseDto::toDto)
@@ -68,6 +54,21 @@ public class PostService {
     public PostResponseDto findPostById(Long postId) {
         Post findPost = findPostByIdOrElseThrow(postId);
         return PostResponseDto.toDto(findPost);
+    }
+
+    /* 수정일 조건 기준 게시글 전체조회 */
+    @Transactional(readOnly = true)
+    public Page<PostResponseDto> findPostsSortedByModifiedAt(LocalDate startDate, LocalDate endDate, int page, int size) {
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
+        Page<Post> postPage = postRepository.findAllByModifiedAt(startDate, endDate, pageable);
+
+        List<PostResponseDto> dtoList = postPage.getContent().stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
     }
 
     @Transactional

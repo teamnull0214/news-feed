@@ -1,10 +1,6 @@
 package com.example.newsfeed.post.controller;
 
 import org.springframework.data.domain.Page;
-import com.example.newsfeed.post.dto.PostUpdateRequestDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,9 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
+import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j
 @RestController
@@ -58,16 +53,15 @@ public class PostController {
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
-    // 게시물 업데이트
-    @LoginRequired
-    /*todo: 페이징 구현 후 정렬하면 될 것 같습니다.*/
     /*게시물 전체 조회*/
     @GetMapping("/sorted-by-created")
-    public ResponseEntity<List<PostResponseDto>> findPostsSortedByModified(
+    public ResponseEntity<Page<PostResponseDto>> findPostsSortedByModified(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponseDto> postResponseDtoList = postService.findPostsSortedByModifiedAt(startDate, endDate);
+        Page<PostResponseDto> postResponseDtoList = postService.findPostsSortedByModifiedAt(startDate, endDate, page, size);
         return ResponseEntity.ok(postResponseDtoList);
     }
 

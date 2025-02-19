@@ -28,12 +28,13 @@ public class MemberPostSortService {
         Member findMember = memberService.findActiveMemberByIdOrElseThrow(memberId);
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(sortBy).descending());
-
+        Pageable pageable;
         Page<Post> postPage;
         if (isLiked != null && isLiked) {
+            pageable = PageRequest.of(adjustedPage, size);
             postPage = postRepository.findAllByMemberIdAndLike(findMember.getId(), pageable);
         } else {
+            pageable = PageRequest.of(adjustedPage, size, Sort.by(sortBy).descending());
             postPage = postRepository.findAllByMemberId(findMember.getId(), startDate, endDate, pageable);
         }
 

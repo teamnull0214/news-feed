@@ -64,7 +64,7 @@ public class MemberPostSortController {
             @RequestParam(defaultValue = "10") int size
     ) {
         ApiResponseDtoImpl<Page<PostResponseDto>> response = new ApiResponseDtoImpl<>();
-        response.ok(memberPostSortService.findPostsSorted(memberId, null, null, page, size, null, false));
+        response.ok(memberPostSortService.findPostsSorted(memberId, null, null, page, size, null, true));
 
         log.info("유저 한명의 전체 게시글 조회 성공(좋아요 많은 순)");
         return ResponseEntity.ok(response);

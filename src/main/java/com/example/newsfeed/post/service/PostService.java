@@ -1,7 +1,7 @@
 package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.dto.SessionMemberDto;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.ForbiddenException;
 import com.example.newsfeed.global.exception.custom.NotFoundException;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.dto.PostRequestDto;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
+import static com.example.newsfeed.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service("postService")
@@ -80,7 +81,7 @@ public class PostService {
         Member findPostMembers = findPost.getMember();
 
         if (!Objects.equals(memberId, findPostMembers.getId())) {
-            throw new IllegalArgumentException("다른사람이 작성한 게시물이라 수정못함");
+            throw new ForbiddenException.MemberAccessDeniedException(CANNOT_UPDATE_OTHERS_DATA);
         }
 
         if (dto.getImage() != null) {
@@ -100,7 +101,7 @@ public class PostService {
         Member findPostMembers = findPost.getMember();
 
         if (!Objects.equals(memberId, findPostMembers.getId())) {
-            throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
+            throw new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND);
         }
         if (!postRepository.existsById(postId)) {
             throw new NotFoundException.PostNotFoundException(POST_NOT_FOUND);

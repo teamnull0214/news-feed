@@ -1,5 +1,6 @@
 package com.example.newsfeed.comment.dto;
 
+import com.example.newsfeed.comment.entity.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,18 @@ public class CommentResponseDto {
         this.commentContents = commentContents;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+
+    public static CommentResponseDto fromComment(Comment comment){
+        return new CommentResponseDto(
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getMember().getNickname(),
+                comment.getMember().getEmail(),
+                comment.getCommentContents(),
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+        );
     }
 }
 

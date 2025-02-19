@@ -19,7 +19,7 @@ public class HandlerException {
 
     /*커스텀 예외 처리*/
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponseDto<Object>> handleCustomException(CustomException exception) {
+    public ResponseEntity<ApiResponseDto<?>> handleCustomException(CustomException exception) {
 
         ErrorResponseDto<Object> objectErrorResponseDto = new ErrorResponseDto<>();
         objectErrorResponseDto.fail(exception.getStatusCode(), exception.getMessage());
@@ -29,7 +29,7 @@ public class HandlerException {
 
     /*valid 검증에 실패할 경우*/
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDto<Object>> handleValidationFailed(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponseDto<?>> handleValidationFailed(MethodArgumentNotValidException exception) {
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
 
         List<String> validFailedList = fieldErrors.stream()
@@ -46,7 +46,7 @@ public class HandlerException {
 
     /*RuntimeException 예외처리*/
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponseDto<Object>> handleRuntimeException(RuntimeException exception) {
+    public ResponseEntity<ApiResponseDto<?>> handleRuntimeException(RuntimeException exception) {
         ErrorResponseDto<Object> errorResponseDto = new ErrorResponseDto<>();
 
         log.info(exception.getMessage());

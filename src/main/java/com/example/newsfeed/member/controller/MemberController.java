@@ -1,7 +1,7 @@
 package com.example.newsfeed.member.controller;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.MemberDeleteRequestDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
 
 @Slf4j
 @RestController
@@ -39,7 +41,7 @@ public class MemberController {
     @LoginRequired
     @GetMapping
     public ResponseEntity<MemberMyGetResponseDto> findMyMember(
-            @SessionAttribute(name ="member") SessionMemberDto currSession
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto currSession
     ) {
         MemberMyGetResponseDto findMyMemberDto = memberService.findMyMember(currSession);
         return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK);
@@ -56,13 +58,13 @@ public class MemberController {
     @LoginRequired
     @PatchMapping("/profile")
     public ResponseEntity<MemberMyGetResponseDto> updateMemberProfile(
-            @SessionAttribute(name = "member") SessionMemberDto session,
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @Valid @RequestBody MemberUpdateProfileRequestDto dto,
             HttpServletRequest httpServletRequest
     ){
         if (dto.getNickname() != null) {
             HttpSession httpSession = httpServletRequest.getSession(false);
-            httpSession.setAttribute("member", session.setNickname(dto.getNickname()));
+            httpSession.setAttribute(LOGIN_MEMBER, session.setNickname(dto.getNickname()));
         }
         log.info("유저 프로필 수정");
         return ResponseEntity.ok(memberService.updateMemberProfile(session, dto));
@@ -73,7 +75,7 @@ public class MemberController {
     @PatchMapping("/password")
     public ResponseEntity<Void> updateMemberPassword(
             @Valid @RequestBody MemberUpdatePasswordRequestDto dto,
-            @SessionAttribute(name = "member") SessionMemberDto session
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         memberService.updateMemberPassword(session, dto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -83,7 +85,7 @@ public class MemberController {
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteMember(
             @Valid @RequestBody MemberDeleteRequestDto dto,
-            @SessionAttribute(name = "member") SessionMemberDto session
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         memberService.deleteMember(session, dto.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,6 +1,6 @@
 package com.example.newsfeed.post.service;
 
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.entity.Post;
@@ -44,7 +44,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto updateImageAndContents(Long postId, Long memberId, PostRequestDto dto) {
+    public PostResponseDto updatePostImageAndContents(Long postId, Long memberId, PostRequestDto dto) {
 
         Post findPost = findPostByIdOrElseThrow(postId);
         Member findPostMembers = findPost.getMember();

@@ -4,7 +4,7 @@ import com.example.newsfeed.comment.dto.CommentRequestDto;
 import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
 import com.example.newsfeed.global.annotation.LoginRequired;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class CommentController {
     @LoginRequired
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentResponseDto> createComment(
-            @SessionAttribute(name = "member") SessionMemberDto session,
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long postId,
             @Valid @RequestBody CommentRequestDto requestDto
     ){
@@ -40,7 +42,7 @@ public class CommentController {
     @LoginRequired
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
-            @SessionAttribute(name = "member") SessionMemberDto session,
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto requestDto
     ){
@@ -51,7 +53,7 @@ public class CommentController {
     @LoginRequired
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
-            @SessionAttribute(name = "member") SessionMemberDto session,
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long commentId
     ){
         commentService.deleteComment(session, commentId);

@@ -1,6 +1,6 @@
 package com.example.newsfeed.member.controller;
 
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.LoginRequestDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.service.MemberService;

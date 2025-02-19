@@ -1,10 +1,9 @@
 package com.example.newsfeed.member.service;
 
-import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.follow.repository.FollowRepository;
 import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.config.PasswordEncoder;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
 import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;

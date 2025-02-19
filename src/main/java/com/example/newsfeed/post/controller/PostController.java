@@ -3,7 +3,7 @@ package com.example.newsfeed.post.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.dto.PostResponseDto;
 import com.example.newsfeed.post.service.PostService;
@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
 
 @Slf4j
 @RestController
@@ -27,7 +29,7 @@ public class PostController {
     @LoginRequired
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(
-            @SessionAttribute(name = "member") SessionMemberDto session,
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @Valid @RequestBody PostRequestDto requestDto
     ) {
         return ResponseEntity.ok(postService.createPost(session, requestDto));
@@ -48,12 +50,12 @@ public class PostController {
     // 게시물 업데이트
     @LoginRequired
     @PatchMapping("/{postId}")
-    public ResponseEntity<PostResponseDto> updateImageAndContents(
+    public ResponseEntity<PostResponseDto> updatePostImageAndContents(
             @PathVariable Long postId,
             @Valid @RequestBody PostRequestDto dto,
-            @SessionAttribute(name = "member") SessionMemberDto session
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
-        PostResponseDto postResponseDto = postService.updateImageAndContents(postId, session.getId(), dto);
+        PostResponseDto postResponseDto = postService.updatePostImageAndContents(postId, session.getId(), dto);
         return ResponseEntity.ok(postResponseDto);
     }
 
@@ -62,7 +64,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public void deletePost(
             @PathVariable Long postId,
-            @SessionAttribute(name = "member") SessionMemberDto session
+            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         postService.deletePost(postId, session.getId());
     }

@@ -1,4 +1,4 @@
-package com.example.newsfeed.global.entity;
+package com.example.newsfeed.global.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

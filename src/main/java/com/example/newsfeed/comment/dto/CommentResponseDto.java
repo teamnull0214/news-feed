@@ -1,7 +1,7 @@
 package com.example.newsfeed.comment.dto;
 
 import com.example.newsfeed.comment.entity.Comment;
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.entity.Post;
 import lombok.AllArgsConstructor;

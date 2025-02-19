@@ -25,4 +25,11 @@ public class NotFoundException {
             super(errorCode);
         }
     }
+
+    /*좋아요 기록이 존재하지 않는 경우*/
+    public static class LikeRecordNotFoundForEntityException extends CustomException {
+        public LikeRecordNotFoundForEntityException(ErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

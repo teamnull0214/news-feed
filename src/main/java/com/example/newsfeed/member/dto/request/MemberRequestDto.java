@@ -1,12 +1,16 @@
-package com.example.newsfeed.member.dto;
+package com.example.newsfeed.member.dto.request;
 
+import com.example.newsfeed.global.config.PasswordEncoder;
+import com.example.newsfeed.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MemberRequestDto {
 
     @NotBlank(message = "이름(실명)을 입력해주세요.")
@@ -18,7 +22,8 @@ public class MemberRequestDto {
     private final String nickname;
 
     @NotBlank(message = "이메일을 입력해주세요")
-    @Email (message = "이메일 형식이 맞지 않습니다.")
+    @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$",
+            message = "이메일 형식이 올바르지 않습니다.")
     private final String email;
 
     @NotBlank (message = "비밀번호를 입력해주세요")
@@ -31,11 +36,7 @@ public class MemberRequestDto {
     @NotBlank (message = "설정한 비밀번호를 재입력해주세요.")
     private final String passwordCheck;
 
-    public MemberRequestDto(String name, String nickname, String email, String password, String passwordCheck) {
-        this.name = name;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-        this.passwordCheck = passwordCheck;
+    public Member toEntity() {
+        return new Member(name, nickname, email, PasswordEncoder.encode(password));
     }
 }

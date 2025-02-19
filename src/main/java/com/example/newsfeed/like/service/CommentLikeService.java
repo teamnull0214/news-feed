@@ -17,12 +17,14 @@ import static com.example.newsfeed.like.entity.LikeStatus.NOT_LIKE;
 @Service
 @RequiredArgsConstructor
 public class CommentLikeService implements LikeService {
+
     private final CommentLikeRepository commentLikeRepository;
     private final CommentService commentService;
 
     @Override
     @Transactional
     public void createLike(Long memberId, Long commentId) {
+
         Comment findComment = validateNotCommentAuthor(memberId, commentId);
         Optional<CommentLike> findCommentLike = commentLikeRepository.findByMemberIdAndCommentId(memberId, findComment.getId());
 
@@ -34,7 +36,8 @@ public class CommentLikeService implements LikeService {
             if (commentLike.getLikeStatus() == LIKE) {
                 throw new RuntimeException("이미 좋아요를 누른 상태입니다.");
             }
-            // 이미 존재하는 좋아요를 업데이트한 경우, 새로 생성할 필요 없음
+
+            /* 이미 존재하는 좋아요를 업데이트한 경우, 새로 생성할 필요 없음 */
             commentLike.updateCommentLike(LIKE);
             return;
         }

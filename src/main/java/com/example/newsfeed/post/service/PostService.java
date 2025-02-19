@@ -1,92 +1,95 @@
 package com.example.newsfeed.post.service;
 
-import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
-import com.example.newsfeed.member.repository.MemberRepository;
-import com.example.newsfeed.post.dto.PostCreateRequestDto;
-import com.example.newsfeed.post.dto.PostCreateResponseDto;
-import com.example.newsfeed.post.dto.PostUpdateRequestDto;
+import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
+
 @Slf4j
-@Service
+@Service("postService")
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
 
-    public PostCreateResponseDto createPost(SessionMemberDto session, PostCreateRequestDto requestDto) {
-        Member member = memberRepository.findMemberById(session.getId()).orElseThrow(
-                () -> new RuntimeException("id에 맞는 멤버가 없습니다.")
-        );
-        Member findMember = Member.fromMemberId(session.getId());
-        Post post = new Post(requestDto.getImage(), requestDto.getContents(), findMember);
-        Post savedPost = postRepository.save(post);
+    @Transactional
+    public PostResponseDto createPost(SessionMemberDto session, PostRequestDto dto) {
+
+        Member member = new Member(session.getId());
+        Post post = new Post(dto.getContents(), dto.getImage(), member);
+        postRepository.save(post);
 
         log.info("게시물 생성 성공");
-        return new PostCreateResponseDto(
-                savedPost.getId(),
-                member.getNickname(),
-                savedPost.getContents(),
-                savedPost.getImage(),
-                savedPost.getCreatedAt(),
-                savedPost.getModifiedAt()
-        );
+        return PostResponseDto.toDto(post, session);
     }
 
-    /*
-    feat/post-read 브랜치
-    모든 작성글을 찾는 서비스 JpaRepository에 스트림
-    */
-    public List<PostResponseDto> findAll() {
-        return postRepository.findAll().stream().map(PostResponseDto::toDto).toList();
+    @Transactional(readOnly = true)
+    public Page<PostResponseDto> findAllPost(int page, int size) {
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
+        Page<Post> postPage = postRepository.findAll(pageable);
+
+        List<PostResponseDto> dtoList = postPage.getContent().stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
     }
 
-
-    /*
-    feat/post-read 브랜치
-    postId를 통해 특정 게시물을 찾는(조회하는) 서비스
-    */
-    public PostResponseDto findById(Long postId) {
-
-        Post findPost = postRepository.findByIdOrElseThrow(postId);
+    @Transactional(readOnly = true)
+    public PostResponseDto findPostById(Long postId) {
+        Post findPost = findPostByIdOrElseThrow(postId);
         return PostResponseDto.toDto(findPost);
     }
 
-    //feat/post-updateDelete
-    // 업데이트
+    /* 수정일 조건 기준 게시글 전체조회 */
+    @Transactional(readOnly = true)
+    public Page<PostResponseDto> findPostsSortedByModifiedAt(LocalDate startDate, LocalDate endDate, int page, int size) {
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
+        Page<Post> postPage = postRepository.findAllByModifiedAt(startDate, endDate, pageable);
+
+        List<PostResponseDto> dtoList = postPage.getContent().stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
+    }
+
     @Transactional
-    public PostResponseDto updateImageAndContents(Long postId, Long memberId, PostUpdateRequestDto dto) {
+    public PostResponseDto updatePostImageAndContents(Long postId, Long memberId, PostRequestDto dto) {
 
         Post findPost = findPostByIdOrElseThrow(postId);
         Member findPostMembers = findPost.getMember();
 
         if (!Objects.equals(memberId, findPostMembers.getId())) {
-            throw new IllegalArgumentException("해당 사용자 ID 찾을 수 없음");
+            throw new IllegalArgumentException("다른사람이 작성한 게시물이라 수정못함");
         }
 
         if (dto.getImage() != null) {
             findPost.updateImage(dto.getImage());
         }
-
         if (dto.getContents() != null) {
             findPost.updateContents(dto.getContents());
         }
         return PostResponseDto.toDto(findPost);
     }
 
-    //feat/post-updateDelete
     //삭제
     @Transactional
     public void deletePost(Long postId, Long memberId) {
@@ -109,5 +112,4 @@ public class PostService {
                 () -> new RuntimeException("해당 ID 찾을 수 없음")
         );
     }
-
 }

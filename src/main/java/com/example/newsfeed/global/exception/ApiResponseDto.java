@@ -17,7 +17,7 @@ public class ApiResponseDto <T>{
 
     private final T data;
 
-    public static <T> ApiResponseDto <T> validationFalied(Integer statusCode, List<String> message) {
+    public static <T> ApiResponseDto <T> validationFailed(Integer statusCode, List<String> message) {
         return new ApiResponseDto<>(statusCode,message,null);
     }
 }

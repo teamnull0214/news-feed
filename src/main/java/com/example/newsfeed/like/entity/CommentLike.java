@@ -31,6 +31,7 @@ public class CommentLike extends BaseDateTime {
     @Enumerated(EnumType.STRING)
     private LikeStatus likeStatus;
 
+    // 초기 설정 좋아요
     public CommentLike(Member Member, Comment comment) {
         this.member = Member;
         this.comment = comment;

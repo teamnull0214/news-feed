@@ -24,7 +24,6 @@ public class PostLikeService implements LikeService{
     public void createLike(Long memberId, Long postId) {
 
         Post findPost = validateNotPostAuthor(memberId, postId);
-
         Optional<PostLike> optionalPostLike = postLikeRepository.findByMemberIdAndPostId(memberId, findPost.getId());
 
         /*
@@ -58,7 +57,6 @@ public class PostLikeService implements LikeService{
         (2) 있을 때 상태가 false 이다 --> 좋아요를 해제한 상태
         (3) 없을 때 --> 좋아요를 한 적이 없음
          */
-
         PostLike findPostLike = findByMemberAndPostOrElseThrow(memberId, findPost.getId());   // (3)
 
         if (findPostLike.getLikeStatus() == LikeStatus.NOT_LIKE) {

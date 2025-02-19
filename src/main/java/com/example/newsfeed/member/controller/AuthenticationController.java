@@ -1,7 +1,7 @@
 package com.example.newsfeed.member.controller;
 
-import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.LoginRequestDto;
+import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.member.dto.request.LoginRequestDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j
 @RestController
@@ -31,7 +33,7 @@ public class AuthenticationController {
 
         Member findLoginMember = memberService.loginMember(dto.getEmail(), dto.getPassword());
         if (findLoginMember != null) {
-            httpSession.setAttribute("member", new SessionMemberDto(
+            httpSession.setAttribute(LOGIN_MEMBER, new SessionMemberDto(
                     findLoginMember.getId(),
                     findLoginMember.getUsername(),
                     findLoginMember.getNickname(),

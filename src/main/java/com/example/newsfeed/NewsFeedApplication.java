@@ -9,7 +9,6 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 
 @EnableJpaAuditing
 @SpringBootApplication
-// 페이징 출력값에서 쓸데없는 값 지워줌
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class NewsFeedApplication {
 

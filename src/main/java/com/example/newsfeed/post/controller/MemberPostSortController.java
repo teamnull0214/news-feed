@@ -55,7 +55,7 @@ public class MemberPostSortController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<PostResponseDto> dtoPage = memberPostSortService.findPostsSorted(memberId, null, null, page, size, null, false);
+        Page<PostResponseDto> dtoPage = memberPostSortService.findPostsSorted(memberId, null, null, page, size, null, true);
         return ResponseEntity.ok(dtoPage);
     }
 }

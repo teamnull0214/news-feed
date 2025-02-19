@@ -26,7 +26,7 @@ public class Post extends BaseDateTime {
     private String contents;
 
     @Column(nullable = false)
-    private String image;
+    private String imagePath;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,16 +39,16 @@ public class Post extends BaseDateTime {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> commentList = new ArrayList<>();
 
-    public Post(String contents, String image, Member member) {
+    public Post(String contents, String imagePath, Member member) {
         this.contents = contents;
-        this.image = image;
+        this.imagePath = imagePath;
         this.member = member;
     }
 
     public void updateContents(String contents) {
         this.contents = contents;
     }
-    public void updateImage(String image) {
-        this.image = image;
+    public void updateImage(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

@@ -2,6 +2,7 @@ package com.example.newsfeed.post.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
@@ -15,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 
 import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
@@ -28,14 +32,28 @@ public class PostController {
 
     private final PostService postService;
 
-    // 게시물 생성 (로그인 상태)
-    @LoginRequired
-    @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(
+//    // 게시물 생성 (로그인 상태)
+//    @LoginRequired
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<PostResponseDto> createPost(
+//            @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
+////            @RequestPart("post") @Valid PostRequestDto requestDto,
+//            @RequestPart(value = "image", required = false) MultipartFile image
+//    ) throws IOException {
+//        return ResponseEntity.ok(postService.createPost(session, null, image));
+//    }
+
+    @PostMapping(value = "/upload",
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity upload(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
-            @Valid @RequestBody PostRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(postService.createPost(session, requestDto));
+            @RequestPart @Valid PostRequestDto request
+//            @RequestPart("file") MultipartFile file)
+    ) throws IOException{
+//        return ResponseEntity.ok(postService.upload(session, request, file));
+//        return ResponseEntity.ok(postService.upload(session, request));
+
+        return null;
     }
 
     @GetMapping

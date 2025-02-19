@@ -16,7 +16,7 @@ public class PostResponseDto {
     private final String nickname;
     private final String email;
     private final String contents;
-    private final String image;
+    private final String imagePath;
     private final int likeCount;
     private final int commentCount;
     private final LocalDateTime createdAt;
@@ -29,7 +29,7 @@ public class PostResponseDto {
                 post.getMember().getNickname(),
                 post.getMember().getEmail(),
                 post.getContents(),
-                post.getImage(),
+                post.getImagePath(),
                 post.getPostLikeList().size(),
                 post.getCommentList().size(),
                 post.getCreatedAt(),
@@ -44,7 +44,7 @@ public class PostResponseDto {
                 dto.getNickname(),
                 dto.getEmail(),
                 post.getContents(),
-                post.getImage(),
+                post.getImagePath(),
                 post.getPostLikeList().size(),
                 post.getCommentList().size(),
                 post.getCreatedAt(),

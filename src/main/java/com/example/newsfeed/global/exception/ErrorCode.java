@@ -19,8 +19,11 @@ public enum ErrorCode {
     LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인 해주세요"),
     CANNOT_UPDATE_OTHERS_DATA(HttpStatus.FORBIDDEN, "다른 사람의 정보는 수정 및 삭제가 불가능합니다."),
     ALREADY_UNFOLLOWED(HttpStatus.BAD_REQUEST, "이미 언팔로우한 유저입니다."),
-    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 내용을 찾을 수 없습니다.");
-
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "팔로우 내용을 찾을 수 없습니다."),
+    ALREADY_LIKED(HttpStatus.BAD_REQUEST, "이미 좋아요를 누른 상태입니다."),
+    ALREADY_UNLIKED(HttpStatus.BAD_REQUEST, "이미 좋아요 해제를 한 댓글입니다."),
+    CANNOT_LIKE_OWN_ENTITY(HttpStatus.BAD_REQUEST, "본인이 작성한 정보는 좋아요/좋아요 취소를 누를 수 없다."),
+    LIKE_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 기록이 존재하지 않음.");
 
     private final HttpStatus statusCode;
     private final String message;

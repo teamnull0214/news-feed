@@ -1,14 +1,18 @@
 package com.example.newsfeed.follow.service;
 
 import com.example.newsfeed.follow.entity.Follow;
+import com.example.newsfeed.follow.entity.FollowStatus;
 import com.example.newsfeed.follow.repository.FollowRepository;
+import com.example.newsfeed.member.dto.MemberListResponseDto;
 import com.example.newsfeed.member.entity.Member;
-import com.example.newsfeed.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -16,28 +20,63 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final MemberService memberService;
 
     @Transactional
     public void createFollow(Long followerId, Long followingId) {
 
+        validateEqualsFollowerAndFollowing(followerId, followingId);
+
+        Optional<Follow> optionalFollow = followRepository.findByFollowerIdAndFollowingId(followerId, followingId);
+
+        if (optionalFollow.isPresent()) {
+            Follow findFollow = optionalFollow.get();
+
+            if (findFollow.getFollowStatus() == FollowStatus.FOLLOWING) {
+                throw new RuntimeException("이미 팔로우를 한 상태입니다.");
+            }
+            findFollow.updateFollowStatus(FollowStatus.FOLLOWING);
+            return;
+        }
+        Follow follow = new Follow(new Member(followerId), new Member(followingId));
+        followRepository.save(follow);
+    }
+
+    @Transactional
+    public void deleteFollow(Long followerId, Long followingId) {
+
+        validateEqualsFollowerAndFollowing(followerId, followingId);
+
+        Follow findFollow = findByFollowerIdAndFollowingIdOrElseThrow(followerId, followingId);
+
+        if (findFollow.getFollowStatus() == FollowStatus.NOT_FOLLOWING) {
+            throw new RuntimeException("이미 언팔로우를 한 유저 입니다.");
+        }
+        findFollow.updateFollowStatus(FollowStatus.NOT_FOLLOWING);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberListResponseDto> findAllFollowerMembers(Long id) {
+        List<Follow> followList = followRepository.findByFollowerIdAndStatus(id);
+
+        return followList.stream()
+                .map(Follow::getFollowingMember)
+                .filter(member -> !member.isDeleted())
+                .map(member -> {
+                    long followerCount = followRepository.countByFollowingMemberId(member.getId());
+                    return new MemberListResponseDto(member, followerCount);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private Follow findByFollowerIdAndFollowingIdOrElseThrow(Long followerId, Long followingId) {
+        return followRepository.findByFollowerIdAndFollowingId(followerId, followingId).orElseThrow(
+                () -> new RuntimeException("팔로우 내용을 찾을 수 없습니다.")
+        );
+    }
+
+    private void validateEqualsFollowerAndFollowing(Long followerId, Long followingId) {
         if (followingId.equals(followerId)) {
-            throw new RuntimeException("본인을 팔로우 할 수 없다.");
-        }
-
-        // 팔로워와 팔로잉을 조회
-        Member followerMember = memberService.findMemberByIdOrElseThrow(followerId);
-        Member findFollowingMember = memberService.findActiveMemberByIdOrElseThrow(followingId);
-
-        if (followRepository.existsFollowByFollowerMemberAndFollowingMember(followerMember, findFollowingMember)) {
-            throw new RuntimeException("이미 팔로우를 한 유저 입니다.");
-        }
-
-        try {
-            Follow follow = new Follow(followerMember, findFollowingMember);       // followStatus 를 true 로 자동 생성
-            followRepository.save(follow);
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("이미 팔로우를 한 유저 입니다.");
+            throw new RuntimeException("본인을 팔로우/언팔로우 할 수 없다.");
         }
     }
 }

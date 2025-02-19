@@ -1,5 +1,6 @@
 package com.example.newsfeed.post.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
@@ -36,11 +37,11 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponseDto>> findAllPosts(
+    public ResponseEntity<Page<PostResponseDto>> findAllPosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponseDto> postResponseDtoList = postService.findAllPost(page, size);
+        Page<PostResponseDto> postResponseDtoList = postService.findAllPost(page, size);
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
     }
 

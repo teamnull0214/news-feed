@@ -61,7 +61,7 @@ public class MemberController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return new ResponseEntity<>(memberService.findAllMemberPage(page,size), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findAllMemberPage(page, size), HttpStatus.OK);
     }
 
     // (본인)유저 프로필 수정

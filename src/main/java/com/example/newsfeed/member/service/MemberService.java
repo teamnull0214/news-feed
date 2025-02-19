@@ -85,7 +85,7 @@ public class MemberService {
     public Page<MemberListGetResponseDto> findAllMemberPage(int page, int size) {
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("id"));
         Page<Member> memberPage = memberRepository.findActiveMemberAll(pageable);
 
         List<MemberListGetResponseDto> dtoList = memberPage.getContent().stream()

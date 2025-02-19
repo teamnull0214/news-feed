@@ -3,16 +3,16 @@ package com.example.newsfeed.member.service;
 import com.example.newsfeed.follow.service.FollowListService;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.*;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
 import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
-import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.dto.response.MemberMyGetResponseDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
+import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import static com.example.newsfeed.global.exception.ErrorCode.*;
+
 
 import static com.example.newsfeed.global.constant.EntityConstants.ID;
 
@@ -37,7 +39,7 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(email);
 
         if (!PasswordEncoder.matches(password, findMember.getPassword())) {
-            throw new RuntimeException("비밀번호가 불일치");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
         return findMember;
     }
@@ -47,7 +49,7 @@ public class MemberService {
 
         /*password와 passwordCheck가 일치하지 않는 경우*/
         if (!dto.getPassword().equals(dto.getPasswordCheck())) {
-            throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_CONFIRM_MISMATCH);
         }
 
         Optional<Member> memberByEmail = memberRepository.findMemberByEmail(dto.getEmail());
@@ -55,9 +57,9 @@ public class MemberService {
             Member findMember = memberByEmail.get();
 
             if(findMember.isDeleted()) {
-                throw new RuntimeException("탈퇴한 유저입니다.");
+                throw new ForbiddenException.MemberDeactivedException(MEMBER_DEACTIVATED);
             }
-            throw new RuntimeException("이미 존재하는 회원입니다.");
+            throw new ConflictException.MemberAlreadyExistsException(MEMBER_ALREADY_EXISTS);
         }
 
         /*member 객체 생성 및 비밀번호 암호화*/
@@ -124,17 +126,17 @@ public class MemberService {
 
         /*본인 확인을 위해 입력한 현재 비밀번호가 일치하지 않은 경우*/
         if(!PasswordEncoder.matches(dto.getOldPassword(), findMember.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
 
         /*현재 비밀번호와 동일한 비밀번호로 수정하는 경우*/
         if(dto.getOldPassword().equals(dto.getNewPassword())) {
-            throw new RuntimeException("새 비밀번호는 기존 비밀번호와 달라야 합니다.");
+            throw new ForbiddenException.NewPasswordSameAsOldException(NEW_PASSWORD_SAME_AS_OLD);
         }
 
         /*새 비밀번호와 새 비밀번호 확인이 일치하지 않은 경우*/
         if(!dto.getNewPassword().equals(dto.getNewPasswordCheck())) {
-            throw new RuntimeException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordConfirmMismatchException(PASSWORD_CONFIRM_MISMATCH);
         }
 
         /*비밀번호 암호화 후 업데이트*/
@@ -147,19 +149,19 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(session.getEmail());
 
         if (!PasswordEncoder.matches(password, findMember.getPassword())) {
-            throw new RuntimeException("입력받은 비밀번호와 유저의 비밀번호가 다름");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
         findMember.updateIsDeleteTrueAndNickname();
     }
 
     private Member findActiveMemberByEmailOrElseThrow(String email) {
         return memberRepository.findActiveMemberByEmail(email).orElseThrow(() ->
-                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 이메일 유저가 없음"));
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND));
     }
 
     public Member findActiveMemberByIdOrElseThrow(Long id) {
         return memberRepository.findActiveMemberById(id).orElseThrow(() ->
-                new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 id 유저가 없음"));
+                new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND));
     }
 
 }

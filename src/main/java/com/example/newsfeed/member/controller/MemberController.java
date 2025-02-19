@@ -2,6 +2,8 @@ package com.example.newsfeed.member.controller;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.ApiResponseDto;
+import com.example.newsfeed.global.exception.ApiResponseDtoImpl;
 import com.example.newsfeed.member.dto.request.MemberDeleteRequestDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
@@ -17,7 +19,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,41 +34,55 @@ public class MemberController {
 
     /*회원가입 기능 구현*/
     @PostMapping("/sign-up")
-    public ResponseEntity<MemberResponseDto> createMember(
+    public ResponseEntity<ApiResponseDto<MemberResponseDto>> createMember(
             @Valid @RequestBody MemberRequestDto dto
     ) {
-        log.info("회원가입 API 호출");
-        return new ResponseEntity<>(memberService.createMember(dto), HttpStatus.CREATED);
+
+        ApiResponseDtoImpl<MemberResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(memberService.createMember(dto));
+
+        log.info("회원가입 성공");
+        return ResponseEntity.ok(response);
     }
 
     @LoginRequired
     @GetMapping("/profile")
-    public ResponseEntity<MemberMyGetResponseDto> findMyMember(
+    public ResponseEntity<ApiResponseDto<MemberMyGetResponseDto>> findMyMember(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto currSession
     ) {
-        MemberMyGetResponseDto findMyMemberDto = memberService.findMyMember(currSession);
-        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK);
+        ApiResponseDtoImpl<MemberMyGetResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(memberService.findMyMember(currSession));
+
+        log.info("본인 프로필 조회 성공");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberGetResponseDto> findMemberById(@PathVariable Long memberId)
+    public ResponseEntity<ApiResponseDto<MemberGetResponseDto>> findMemberById(@PathVariable Long memberId)
     {
-        MemberGetResponseDto memberGetResponseDto = memberService.findMemberById(memberId);
-        return new ResponseEntity<>(memberGetResponseDto, HttpStatus.OK);
+        ApiResponseDtoImpl<MemberGetResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(memberService.findMemberById(memberId));
+
+        log.info("다른 유저 프로필 조회 성공");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<Page<MemberListGetResponseDto>> findAllMemberPage(
+    public ResponseEntity<ApiResponseDto<Page<MemberListGetResponseDto>>> findAllMemberPage(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return new ResponseEntity<>(memberService.findAllMemberPage(page, size), HttpStatus.OK);
+        ApiResponseDtoImpl<Page<MemberListGetResponseDto>> response = new ApiResponseDtoImpl<>();
+        response.ok(memberService.findAllMemberPage(page, size));
+
+        log.info("유저 목록 전체 조회 성공");
+        return ResponseEntity.ok(response);
     }
 
     // (본인)유저 프로필 수정
     @LoginRequired
     @PatchMapping("/profile")
-    public ResponseEntity<MemberMyGetResponseDto> updateMemberProfile(
+    public ResponseEntity<ApiResponseDto<MemberMyGetResponseDto>> updateMemberProfile(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @Valid @RequestBody MemberUpdateProfileRequestDto dto,
             HttpServletRequest httpServletRequest
@@ -76,28 +91,41 @@ public class MemberController {
             HttpSession httpSession = httpServletRequest.getSession(false);
             httpSession.setAttribute(LOGIN_MEMBER, session.setNickname(dto.getNickname()));
         }
-        log.info("유저 프로필 수정");
-        return ResponseEntity.ok(memberService.updateMemberProfile(session, dto));
+        ApiResponseDtoImpl<MemberMyGetResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(memberService.updateMemberProfile(session, dto));
+
+        log.info("본인 프로필 수정 성공");
+        return ResponseEntity.ok(response);
     }
 
     /*유저의 비밀번호 업데이트*/
     @LoginRequired
     @PatchMapping("/password")
-    public ResponseEntity<Void> updateMemberPassword(
+    public ResponseEntity<ApiResponseDto<Void>> updateMemberPassword(
             @Valid @RequestBody MemberUpdatePasswordRequestDto dto,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         memberService.updateMemberPassword(session, dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
+        response.ok(null);
+
+        log.info("비밀번호 수정 성공");
+        return ResponseEntity.ok(response);
     }
 
     @LoginRequired
     @PostMapping("/delete")
-    public ResponseEntity<Void> deleteMember(
+    public ResponseEntity<ApiResponseDto<Void>> deleteMember(
             @Valid @RequestBody MemberDeleteRequestDto dto,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         memberService.deleteMember(session, dto.getPassword());
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
+        response.ok(null);
+
+        log.info("유저 탈퇴 성공");
+        return ResponseEntity.ok(response);
     }
 }

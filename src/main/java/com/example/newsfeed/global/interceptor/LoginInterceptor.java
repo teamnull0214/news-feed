@@ -2,6 +2,7 @@ package com.example.newsfeed.global.interceptor;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import static com.example.newsfeed.global.exception.ErrorCode.LOGIN_REQUIRED;
 import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j
@@ -28,7 +30,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (isLoginRequired(handlerMethod)) {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute(LOGIN_MEMBER) == null) {
-                throw new RuntimeException("로그인 필요");
+                throw new UnauthorizedException.LoginRequiredException(LOGIN_REQUIRED);
             }
             SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute(LOGIN_MEMBER);
             log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",

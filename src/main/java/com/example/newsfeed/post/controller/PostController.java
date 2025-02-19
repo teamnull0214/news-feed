@@ -4,6 +4,7 @@ import com.example.newsfeed.post.dto.PostUpdateRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.newsfeed.global.annotation.LoginRequired;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -47,7 +50,6 @@ public class PostController {
 
         PostResponseDto postResponseDto = postService.findById(postId);
 
-        // 성공시 status 200 실패시 stauts 404 PostRepository.java ->  findByIdOrElseThrow 메서드 참고
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK); // status 200
     }
 

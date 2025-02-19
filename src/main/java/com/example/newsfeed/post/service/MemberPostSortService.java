@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service("postSortService")
 @RequiredArgsConstructor
-public class PostSortService {
+public class MemberPostSortService {
 
     private final PostRepository postRepository;
     private final MemberService memberService;

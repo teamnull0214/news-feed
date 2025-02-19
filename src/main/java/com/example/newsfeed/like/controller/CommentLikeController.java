@@ -33,7 +33,7 @@ public class CommentLikeController{
         ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
         response.ok(null);
 
-        log.info("좋아요 누르기 성공");
+        log.info("댓글 좋아요 누르기 성공");
         return ResponseEntity.ok(response);
     }
 
@@ -48,7 +48,7 @@ public class CommentLikeController{
         ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
         response.ok(null);
 
-        log.info("좋아요 취소 성공");
+        log.info("댓글 좋아요 취소 성공");
         return ResponseEntity.ok(response);
     }
 }

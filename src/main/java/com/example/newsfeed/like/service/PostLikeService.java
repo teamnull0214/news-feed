@@ -1,5 +1,8 @@
 package com.example.newsfeed.like.service;
 
+import com.example.newsfeed.global.exception.custom.BadRequestException;
+import com.example.newsfeed.global.exception.custom.ConflictException;
+import com.example.newsfeed.global.exception.custom.NotFoundException;
 import com.example.newsfeed.like.entity.LikeStatus;
 import com.example.newsfeed.like.entity.PostLike;
 import com.example.newsfeed.like.repository.PostLikeRepository;
@@ -11,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.example.newsfeed.global.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +41,7 @@ public class PostLikeService implements LikeService{
             PostLike findPostLike = optionalPostLike.get();
 
             if (findPostLike.getLikeStatus() == LikeStatus.LIKE) {
-                throw new RuntimeException("이미 좋아요를 누른 상태입니다.");    // (1)
+                throw new ConflictException.AlreadyLikedException(ALREADY_LIKED);    // (1)
             }
             findPostLike.updateLikeStatus(LikeStatus.LIKE);             // (2)
             return;
@@ -60,7 +65,7 @@ public class PostLikeService implements LikeService{
         PostLike findPostLike = findByMemberAndPostOrElseThrow(memberId, findPost.getId());   // (3)
 
         if (findPostLike.getLikeStatus() == LikeStatus.NOT_LIKE) {
-            throw new RuntimeException("이미 좋아요 해제를 한 게시물 입니다.");                // (2)
+            throw new ConflictException.AlreadyUnLikedException(ALREADY_UNLIKED);               // (2)
         }
         findPostLike.updateLikeStatus(LikeStatus.NOT_LIKE);                             // (1)
     }
@@ -69,14 +74,14 @@ public class PostLikeService implements LikeService{
         Post findPost = postService.findPostByIdOrElseThrow(postId);
 
         if (findPost.getMember().getId().equals(memberId)) {
-            throw new RuntimeException("본인이 작성한 게시글에 좋아요/좋아요 취소를 누를 수 없다.");
+            throw new BadRequestException.CannotLikeOwnEntityException(CANNOT_LIKE_OWN_ENTITY);
         }
         return findPost;
     }
 
     private PostLike findByMemberAndPostOrElseThrow(Long memberId, Long postId) {
         return postLikeRepository.findByMemberIdAndPostId(memberId, postId).orElseThrow(
-                () -> new RuntimeException("좋아요 기록 존재하지 않음")
+                () -> new NotFoundException.LikeRecordNotFoundForEntityException(LIKE_RECORD_NOT_FOUND)
         );
     }
 }

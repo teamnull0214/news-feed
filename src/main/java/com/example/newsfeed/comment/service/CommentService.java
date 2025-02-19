@@ -34,6 +34,7 @@ public class CommentService {
         return CommentResponseDto.toDto(comment, session);
     }
 
+
     // 댓글 조회
     @Transactional(readOnly = true)
     public List<CommentResponseDto> findCommentAllByPostId(Long postId) {
@@ -49,7 +50,9 @@ public class CommentService {
     public CommentResponseDto updateComment(SessionMemberDto session, Long commentId, CommentRequestDto requestDto) {
         Comment comment = findCommentByIdOrElseThrow(commentId);
         // 댓글을 단 게시물 찾기
-        if(!comment.getMember().getId().equals(session.getId())){
+        Post post = postService.findPostByIdOrElseThrow(postId);
+
+        if (!comment.getMember().getId().equals(session.getId())) {
             throw new RuntimeException("본인이 작성한 댓글만 수정할 수 있습니다.");
         }
 
@@ -62,10 +65,24 @@ public class CommentService {
     public void deleteComment(SessionMemberDto session, Long commentId) {
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
-        if(!comment.getMember().getId().equals(session.getId())){
+        if (!comment.getMember().getId().equals(session.getId())){
             throw new RuntimeException("본인이 작성한 댓글만 삭제할 수 있습니다.");
         }
         commentRepository.delete(comment);
+    }
+
+    // 댓글 페이징
+    @Transactional(readOnly = true)
+    public Page<CommentResponseDto> findCommentsOnPost(Long postId, int page, int size) {
+
+        long count = commentRepository.count();
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<CommentResponseDto> dtoList = comments.stream()
+                .map(comment -> CommentResponseDto.fromComment(comment)).toList();
+        return new PageImpl<>(dtoList, pageable, count);
     }
 
     public Comment findCommentByIdOrElseThrow(Long commentId) {
@@ -73,4 +90,6 @@ public class CommentService {
                 () -> new RuntimeException("해당 댓글이 없습니다.")
         );
     }
+
+
 }

@@ -43,4 +43,8 @@ public class Comment extends BaseDateTime {
         this.commentContents = commentContents;
     }
 
+    public Comment(Long id) {
+        this.id = id;
+    }
+
 }

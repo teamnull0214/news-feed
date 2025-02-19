@@ -7,6 +7,7 @@ import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,5 +59,17 @@ public class CommentController {
     ){
         commentService.deleteComment(session, commentId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 댓글 페이징 구현
+    @GetMapping("/posts/{postId}/page")
+    public ResponseEntity<Page<CommentResponseDto>> findCommentsOnPost(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Page<CommentResponseDto> result = commentService.findCommentsOnPost(postId, page, size);
+        return ResponseEntity.ok(result);
+
     }
 }

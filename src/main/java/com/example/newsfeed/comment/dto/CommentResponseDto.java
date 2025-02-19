@@ -1,6 +1,7 @@
 package com.example.newsfeed.comment.dto;
 
 import com.example.newsfeed.comment.entity.Comment;
+import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.entity.Post;
@@ -47,6 +48,18 @@ public class CommentResponseDto {
                 session.getEmail(),
                 comment.getCommentContents(),
                 comment.getCommentLikeList().size(),
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+        );
+    }
+
+    public static CommentResponseDto fromComment(Comment comment){
+        return new CommentResponseDto(
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getMember().getNickname(),
+                comment.getMember().getEmail(),
+                comment.getCommentContents(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         );

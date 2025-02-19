@@ -1,6 +1,6 @@
 package com.example.newsfeed.global.exception;
 
-import com.example.newsfeed.global.exception.custom.CustomException;import lombok.Builder;
+import com.example.newsfeed.global.exception.custom.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public class HandlerException {
 
     /*커스텀 예외 처리*/
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ApiResponseDto<?>> handleCustomException(CustomException exception) {
+    public ResponseEntity<ApiResponseDto<String>> handleCustomException(CustomException exception) {
 
         ApiResponseDtoImpl<String> reponse = new ApiResponseDtoImpl<>();
         reponse.fail(exception.getStatusCode(), exception.getMessage());
@@ -28,7 +28,7 @@ public class HandlerException {
 
     /*valid 검증에 실패할 경우*/
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponseDto<?>> handleValidationFailed(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponseDto<List<String>>> handleValidationFailed(MethodArgumentNotValidException exception) {
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
 
         List<String> validFailedList = fieldErrors.stream()
@@ -45,7 +45,7 @@ public class HandlerException {
 
     /*RuntimeException 예외처리*/
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponseDto<?>> handleRuntimeException(RuntimeException exception) {
+    public ResponseEntity<ApiResponseDto<String>> handleRuntimeException(RuntimeException exception) {
         ApiResponseDtoImpl<String> response = new ApiResponseDtoImpl<>();
 
         log.error("RuntimeException 발생: {}", exception.getMessage(), exception);

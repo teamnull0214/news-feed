@@ -27,21 +27,26 @@ public class CommentController {
     // 댓글 생성
     @LoginRequired
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<ApiResponseDto<?>> createComment(
+    public ResponseEntity<ApiResponseDto<CommentCreateResponseDto>> createComment(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @PathVariable Long postId,
             @RequestBody CommentCreateRequestDto requestDto
     ){
-        CommentCreateResponseDto comment = commentService.createComment(session, postId, requestDto);
-        ApiResponseDtoImpl<Object> ApiResponseDto = new ApiResponseDtoImpl<>();
-        ApiResponseDto.ok(comment);
-        return ResponseEntity.ok(ApiResponseDto);
+
+        ApiResponseDtoImpl<CommentCreateResponseDto> reponse = new ApiResponseDtoImpl<>();
+        reponse.ok(commentService.createComment(session, postId, requestDto));
+
+        return ResponseEntity.ok(reponse);
     }
 
     // 댓글 조회
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findByComment(@PathVariable Long postId){
-        return ResponseEntity.ok(commentService.findByComment(postId));
+    public ResponseEntity<ApiResponseDto<List<CommentResponseDto>>> findByComment(@PathVariable Long postId){
+
+        ApiResponseDtoImpl<List<CommentResponseDto>> response = new ApiResponseDtoImpl<>();
+        response.ok(commentService.findByComment(postId));
+
+        return ResponseEntity.ok(response);
     }
 
 

@@ -35,8 +35,12 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findCommentAllByPostId(@PathVariable Long postId){
-        return ResponseEntity.ok(commentService.findCommentAllByPostId(postId));
+    public ResponseEntity<Page<CommentResponseDto>> findCommentAllByPostId(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(commentService.findCommentsOnPost(postId, page, size));
     }
 
     // 댓글수정

@@ -1,7 +1,9 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.comment.dto.CommentResponseDto;
+import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.follow.repository.FollowRepository;
-import com.example.newsfeed.follow.service.FollowService;
+import com.example.newsfeed.follow.service.FollowListService;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
@@ -15,10 +17,7 @@ import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final FollowService followService;
+    private final FollowListService followService;
     private final FollowRepository followRepository;
 
     public Member loginMember(String email, String password) {
@@ -86,13 +85,14 @@ public class MemberService {
     public Page<MemberListGetResponseDto> findAllMemberPage(int page, int size) {
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Page<Member> memberPage = memberRepository.findActiveMemberAll(pageable);
 
-        PageRequest pageable = PageRequest.of(adjustedPage,size, Sort.by("modifiedAt").descending());
-        List<Member> memberList = memberRepository.findActiveMemberAll();
-        List<MemberListGetResponseDto> responseDtoList = memberList.stream()
+        List<MemberListGetResponseDto> dtoList = memberPage.getContent().stream()
                 .map(member -> MemberListGetResponseDto.toDto(member, followRepository.countByFollowingMemberId(member.getId())))
                 .toList();
-        return new PageImpl<>(responseDtoList, pageable, memberList.size());
+
+        return new PageImpl<>(dtoList, pageable, memberPage.getTotalElements());
     }
 
 

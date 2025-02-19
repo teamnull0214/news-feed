@@ -1,6 +1,8 @@
 package com.example.newsfeed.follow.repository;
 
 import com.example.newsfeed.follow.entity.Follow;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +21,5 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     );
 
     @Query("SELECT f FROM Follow f WHERE f.followerMember.id = :followerId AND f.followStatus = 'FOLLOWING'")
-    List<Follow> findByFollowerIdAndStatus(@Param("followerId") Long followerId);
+    Page<Follow> findByFollowerIdAndStatus(@Param("followerId") Long followerId, Pageable pageable);
 }

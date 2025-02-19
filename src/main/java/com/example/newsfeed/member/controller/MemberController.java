@@ -7,6 +7,7 @@ import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
 import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.dto.response.MemberMyGetResponseDto;
 import com.example.newsfeed.member.service.MemberService;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +41,7 @@ public class MemberController {
     }
 
     @LoginRequired
-    @GetMapping
+    @GetMapping("/profile")
     public ResponseEntity<MemberMyGetResponseDto> findMyMember(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto currSession
     ) {
@@ -52,6 +54,14 @@ public class MemberController {
     {
         MemberGetResponseDto memberGetResponseDto = memberService.findMemberById(memberId);
         return new ResponseEntity<>(memberGetResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<MemberListGetResponseDto>> findAllMemberPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return new ResponseEntity<>(memberService.findAllMemberPage(page,size), HttpStatus.OK);
     }
 
     // (본인)유저 프로필 수정

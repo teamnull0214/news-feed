@@ -9,6 +9,7 @@ import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,23 +35,25 @@ public class CommentService {
         return CommentResponseDto.toDto(comment, session);
     }
 
-
-    // 댓글 조회
+    // 댓글 페이징
     @Transactional(readOnly = true)
-    public List<CommentResponseDto> findCommentAllByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+    public Page<CommentResponseDto> findCommentsOnPost(Long postId, int page, int size) {
 
-        return comments.stream()
-                .map(CommentResponseDto::toDto)
-                .collect(Collectors.toList());
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Page<Comment> commentPage = commentRepository.findByPostId(postId, pageable);
+
+        List<CommentResponseDto> dtoList = commentPage.getContent().stream()
+                .map(CommentResponseDto::toDto).toList();
+
+        // 사용 매개변수: list, pageable(page,size,정렬기준 설정), 전체 요소 크기
+        return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
     }
 
     // 댓글수정
     @Transactional
     public CommentResponseDto updateComment(SessionMemberDto session, Long commentId, CommentRequestDto requestDto) {
         Comment comment = findCommentByIdOrElseThrow(commentId);
-        // 댓글을 단 게시물 찾기
-        Post post = postService.findPostByIdOrElseThrow(postId);
 
         if (!comment.getMember().getId().equals(session.getId())) {
             throw new RuntimeException("본인이 작성한 댓글만 수정할 수 있습니다.");
@@ -69,20 +72,6 @@ public class CommentService {
             throw new RuntimeException("본인이 작성한 댓글만 삭제할 수 있습니다.");
         }
         commentRepository.delete(comment);
-    }
-
-    // 댓글 페이징
-    @Transactional(readOnly = true)
-    public Page<CommentResponseDto> findCommentsOnPost(Long postId, int page, int size) {
-
-        long count = commentRepository.count();
-
-        int adjustedPage = (page > 0) ? page - 1 : 0;
-        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        List<CommentResponseDto> dtoList = comments.stream()
-                .map(comment -> CommentResponseDto.fromComment(comment)).toList();
-        return new PageImpl<>(dtoList, pageable, count);
     }
 
     public Comment findCommentByIdOrElseThrow(Long commentId) {

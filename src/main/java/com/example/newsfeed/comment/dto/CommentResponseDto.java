@@ -52,17 +52,5 @@ public class CommentResponseDto {
                 comment.getModifiedAt()
         );
     }
-
-    public static CommentResponseDto fromComment(Comment comment){
-        return new CommentResponseDto(
-                comment.getId(),
-                comment.getPost().getId(),
-                comment.getMember().getNickname(),
-                comment.getMember().getEmail(),
-                comment.getCommentContents(),
-                comment.getCreatedAt(),
-                comment.getModifiedAt()
-        );
-    }
 }
 

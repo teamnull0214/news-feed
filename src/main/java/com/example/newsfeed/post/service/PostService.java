@@ -1,6 +1,7 @@
 package com.example.newsfeed.post.service;
 
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.dto.PostRequestDto;
 import com.example.newsfeed.post.entity.Post;
@@ -8,6 +9,7 @@ import com.example.newsfeed.post.repository.PostRepository;
 import com.example.newsfeed.post.dto.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,17 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponseDto> findAllPost() {
-        return postRepository.findAll().stream().map(PostResponseDto::toDto).toList();
+    public Page<PostResponseDto> findAllPost(int page, int size) {
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Page<Post> postPage = postRepository.findAll(pageable);
+
+        List<PostResponseDto> dtoList = postPage.getContent().stream()
+                .map(PostResponseDto::toDto)
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, postPage.getTotalElements());
     }
 
     @Transactional(readOnly = true)

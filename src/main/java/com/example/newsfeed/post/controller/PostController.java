@@ -65,7 +65,6 @@ public class PostController {
         return ResponseEntity.ok(postResponseDtoList);
     }
 
-    //feat/post-updateDelete
     // 포스트 업데이트
     @PatchMapping("/{postId}")
     public ResponseEntity<PostResponseDto> updatePostImageAndContents(

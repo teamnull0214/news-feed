@@ -1,4 +1,4 @@
-package com.example.newsfeed.member.dto;
+package com.example.newsfeed.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class updatePasswordRequestDto {
+public class MemberUpdatePasswordRequestDto {
 
     @NotBlank (message = "비밀번호를 입력해주세요")
     private final String oldPassword;

@@ -1,5 +1,6 @@
 package com.example.newsfeed.global.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import com.example.newsfeed.global.exception.custom.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +11,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
+import static com.example.newsfeed.global.exception.ApiResponseDto.validationFailed;
 
+@Hidden
 @Slf4j
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class HandlerException {
 
     /*커스텀 예외 처리*/

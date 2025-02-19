@@ -1,10 +1,8 @@
 package com.example.newsfeed.global.interceptor;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
-import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.global.exception.custom.UnauthorizedException;
-import jakarta.servlet.UnavailableException;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -13,7 +11,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import static com.example.newsfeed.global.exception.ErrorCode.LOGIN_REQUIRED;
-
 import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j

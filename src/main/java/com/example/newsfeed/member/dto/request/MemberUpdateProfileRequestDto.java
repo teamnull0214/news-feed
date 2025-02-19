@@ -14,6 +14,9 @@ public class MemberUpdateProfileRequestDto {
     @Size(min = 1, max = 14, message = "닉네임은 1 ~ 14자 이어야 합니다.")
     private String nickname;
 
+    @Size(min = 1, max = 14, message = "닉네임은 1 ~ 14자 이어야 합니다.")
     private String info;
+
+    @Size(min = 1, max = 4, message = "닉네임은 1 ~ 14자 이어야 합니다.")
     private String mbti;
 }

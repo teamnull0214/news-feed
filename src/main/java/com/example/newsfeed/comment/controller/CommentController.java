@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,13 +23,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    /*댓글 생성*/
     @LoginRequired
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<ApiResponseDto<CommentResponseDto>> createComment(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long postId,
             @Valid @RequestBody CommentRequestDto requestDto
-    ){
+    ) {
 
         ApiResponseDtoImpl<CommentResponseDto> reponse = new ApiResponseDtoImpl<>();
         reponse.ok(commentService.createComment(session, postId, requestDto));
@@ -45,7 +45,7 @@ public class CommentController {
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
-    ){
+    ) {
         ApiResponseDtoImpl<Page<CommentResponseDto>> response = new ApiResponseDtoImpl<>();
         response.ok(commentService.findCommentsOnPost(postId, page, size));
 
@@ -60,12 +60,13 @@ public class CommentController {
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto requestDto
-    ){
+    ) {
         ApiResponseDtoImpl<CommentResponseDto> response = new ApiResponseDtoImpl<>();
         response.ok(commentService.updateComment(session, commentId, requestDto));
 
         log.info("댓글 수정 성공");
-        return ResponseEntity.ok(response);    }
+        return ResponseEntity.ok(response);
+    }
 
     // 해당 댓글 삭제
     @LoginRequired
@@ -73,7 +74,7 @@ public class CommentController {
     public ResponseEntity<ApiResponseDto<Void>> deleteComment(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @PathVariable Long commentId
-    ){
+    ) {
         commentService.deleteComment(session, commentId);
 
         ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();

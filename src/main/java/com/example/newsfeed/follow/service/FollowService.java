@@ -54,7 +54,7 @@ public class FollowService {
         Follow findFollow = findByFollowerIdAndFollowingIdOrElseThrow(followerId, followingId);
 
         if (findFollow.getFollowStatus() == FollowStatus.NOT_FOLLOWING) {
-            throw new BadRequestException.AlreadyUnFollowedException(ALREADY_UNFOLLOWED);
+            throw new ConflictException.AlreadyUnFollowedException(ALREADY_UNFOLLOWED);
         }
         findFollow.updateFollowStatus(FollowStatus.NOT_FOLLOWING);
     }

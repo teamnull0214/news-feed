@@ -5,6 +5,8 @@ import com.example.newsfeed.comment.dto.CommentResponseDto;
 import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.comment.repository.CommentRepository;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.ErrorCode;
+import com.example.newsfeed.global.exception.custom.ForbiddenException;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.post.entity.Post;
 import com.example.newsfeed.post.service.PostService;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
+import static com.example.newsfeed.global.exception.ErrorCode.CANNOT_UPDATE_OTHERS_DATA;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +60,7 @@ public class CommentService {
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getMember().getId().equals(session.getId())) {
-            throw new RuntimeException("본인이 작성한 댓글만 수정할 수 있습니다.");
+            throw new ForbiddenException.MemberAccessDeniedException(CANNOT_UPDATE_OTHERS_DATA);
         }
 
         comment.updateComment(requestDto.getCommentContents());
@@ -70,7 +73,7 @@ public class CommentService {
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getMember().getId().equals(session.getId())){
-            throw new RuntimeException("본인이 작성한 댓글만 삭제할 수 있습니다.");
+            throw new ForbiddenException.MemberAccessDeniedException(CANNOT_UPDATE_OTHERS_DATA);
         }
         commentRepository.delete(comment);
     }

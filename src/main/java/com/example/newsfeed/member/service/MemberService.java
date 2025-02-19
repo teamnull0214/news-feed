@@ -2,24 +2,17 @@ package com.example.newsfeed.member.service;
 
 import com.example.newsfeed.follow.service.FollowListService;
 import com.example.newsfeed.global.config.PasswordEncoder;
-import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.global.exception.custom.*;
-import com.example.newsfeed.member.dto.MemberResponseDto;
-import com.example.newsfeed.member.dto.findmemberdto.*;
-import com.example.newsfeed.member.dto.updatePasswordRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.*;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
 import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
 import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
-import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.dto.response.MemberMyGetResponseDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
+import com.example.newsfeed.member.dto.response.MemberResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -46,7 +39,7 @@ public class MemberService {
         Member findMember = findActiveMemberByEmailOrElseThrow(email);
 
         if (!PasswordEncoder.matches(password, findMember.getPassword())) {
-            throw new RuntimeException("비밀번호가 불일치");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_MISMATCH);
         }
         return findMember;
     }
@@ -56,7 +49,7 @@ public class MemberService {
 
         /*password와 passwordCheck가 일치하지 않는 경우*/
         if (!dto.getPassword().equals(dto.getPasswordCheck())) {
-            throw new RuntimeException("비밀번호가 서로 일치하지 않습니다.");
+            throw new ForbiddenException.PasswordMismatchException(PASSWORD_CONFIRM_MISMATCH);
         }
 
         Optional<Member> memberByEmail = memberRepository.findMemberByEmail(dto.getEmail());

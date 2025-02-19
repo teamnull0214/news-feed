@@ -10,4 +10,11 @@ public class BadRequestException{
             super(errorCode);
         }
     }
+
+    /*이미 언팔로우를 한 경우*/
+    public static class AlreadyUnFollowedException extends CustomException {
+        public AlreadyUnFollowedException(ErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

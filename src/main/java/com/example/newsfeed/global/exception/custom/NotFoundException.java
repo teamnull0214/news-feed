@@ -18,4 +18,11 @@ public class NotFoundException {
             super(errorCode);
         }
     }
+
+    /*팔로우 내용을 찾을 수 없는 경우*/
+    public static class FollowNotFoundException extends CustomException {
+        public FollowNotFoundException(ErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

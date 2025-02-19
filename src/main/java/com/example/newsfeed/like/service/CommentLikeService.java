@@ -2,6 +2,9 @@ package com.example.newsfeed.like.service;
 
 import com.example.newsfeed.comment.entity.Comment;
 import com.example.newsfeed.comment.service.CommentService;
+import com.example.newsfeed.global.exception.custom.BadRequestException;
+import com.example.newsfeed.global.exception.custom.ConflictException;
+import com.example.newsfeed.global.exception.custom.NotFoundException;
 import com.example.newsfeed.like.entity.CommentLike;
 import com.example.newsfeed.like.repository.CommentLikeRepository;
 import com.example.newsfeed.member.entity.Member;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.example.newsfeed.global.exception.ErrorCode.*;
 import static com.example.newsfeed.like.entity.LikeStatus.LIKE;
 import static com.example.newsfeed.like.entity.LikeStatus.NOT_LIKE;
 
@@ -34,7 +38,7 @@ public class CommentLikeService implements LikeService {
 
             /* 이미 좋아요가 눌려있는 경우 */
             if (commentLike.getLikeStatus() == LIKE) {
-                throw new RuntimeException("이미 좋아요를 누른 상태입니다.");
+                throw new ConflictException.AlreadyLikedException(ALREADY_LIKED);
             }
 
             /* 이미 존재하는 좋아요를 업데이트한 경우, 새로 생성할 필요 없음 */
@@ -54,7 +58,7 @@ public class CommentLikeService implements LikeService {
         CommentLike findCommentLike = findByMemberAndCommentOrElseThrow(memberId, findComment.getId());
 
         if (findCommentLike.getLikeStatus() == NOT_LIKE) {
-            throw new RuntimeException("이미 좋아요 해제를 한 댓글입니다.");
+            throw new ConflictException.AlreadyUnLikedException(ALREADY_UNLIKED);
         }
 
         findCommentLike.updateCommentLike(NOT_LIKE);
@@ -65,13 +69,13 @@ public class CommentLikeService implements LikeService {
 
         /* 본인이 작성한 댓글에 좋아요를 남길 수 없습니다. */
         if (findComment.getMember().getId().equals(memberId)) {
-            throw new RuntimeException("본인이 작성한 댓글에 좋아요/좋아요 취소를 누를 수 없다.");
+            throw new BadRequestException.CannotLikeOwnEntityException(CANNOT_LIKE_OWN_ENTITY);
         }
         return findComment;
     }
 
     private CommentLike findByMemberAndCommentOrElseThrow(Long memberId, Long commentId) {
         return commentLikeRepository.findByMemberIdAndCommentId(
-                memberId, commentId).orElseThrow(() -> new RuntimeException("좋아요 기록이 존재하지 않음"));
+                memberId, commentId).orElseThrow(() -> new NotFoundException.LikeRecordNotFoundForEntityException(LIKE_RECORD_NOT_FOUND));
     }
 }

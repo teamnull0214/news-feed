@@ -1,5 +1,6 @@
 package com.example.newsfeed.member.controller;
 
+import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
 import com.example.newsfeed.global.exception.ApiResponseDto;
 import com.example.newsfeed.global.exception.ApiResponseDtoImpl;
@@ -58,6 +59,7 @@ public class AuthenticationController {
         throw new NotFoundException.MemberNotFoundException(MEMBER_NOT_FOUND);
     }
 
+    @LoginRequired
     @GetMapping("/logout")
     public ResponseEntity<ApiResponseDto<Void>> logoutMember(HttpServletRequest httpServletRequest) {
         HttpSession session = httpServletRequest.getSession(false);

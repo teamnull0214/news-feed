@@ -50,17 +50,18 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
-
     // 댓글수정
     @LoginRequired
     @PatchMapping("/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentUpdateResponseDto> updateComment(
+    public ResponseEntity<ApiResponseDtoImpl<CommentUpdateResponseDto>> updateComment(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @RequestBody CommentUpdateRequestDto requestDto
     ){
-        return ResponseEntity.ok(commentService.updateComment(session, postId, commentId, requestDto));
+        ApiResponseDtoImpl<CommentUpdateResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(commentService.updateComment(session, postId, commentId, requestDto));
+        return ResponseEntity.ok(response);
     }
 
     // 해당 댓글 삭제

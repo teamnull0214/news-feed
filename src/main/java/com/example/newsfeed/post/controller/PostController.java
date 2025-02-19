@@ -1,5 +1,7 @@
 package com.example.newsfeed.post.controller;
 
+import com.example.newsfeed.global.exception.ApiResponseDto;
+import com.example.newsfeed.global.exception.ApiResponseDtoImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,59 +32,84 @@ public class PostController {
     // 게시물 생성 (로그인 상태)
     @LoginRequired
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(
+    public ResponseEntity<ApiResponseDto<PostResponseDto>> createPost(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @Valid @RequestBody PostRequestDto requestDto
     ) {
-        return ResponseEntity.ok(postService.createPost(session, requestDto));
+        ApiResponseDtoImpl<PostResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(postService.createPost(session, requestDto));
+
+        log.info("게시물 생성 성공");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<Page<PostResponseDto>> findAllPosts(
+    public ResponseEntity<ApiResponseDto<Page<PostResponseDto>>> findAllPosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<PostResponseDto> postResponseDtoList = postService.findAllPost(page, size);
-        return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
+        ApiResponseDtoImpl<Page<PostResponseDto>> response = new ApiResponseDtoImpl<>();
+        response.ok(postService.findAllPost(page, size));
+
+        log.info("게시물 전체 조회 성공");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponseDto> findPostById(@PathVariable Long postId) {
-        PostResponseDto postResponseDto = postService.findPostById(postId);
-        return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
+    public ResponseEntity<ApiResponseDto<PostResponseDto>> findPostById(@PathVariable Long postId) {
+
+        ApiResponseDtoImpl<PostResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(postService.findPostById(postId));
+
+        log.info("게시물 단건 조회 성공");
+        return ResponseEntity.ok(response);
+
     }
 
     /*게시물 전체 조회*/
     @GetMapping("/sorted-by-created")
-    public ResponseEntity<Page<PostResponseDto>> findPostsSortedByModified(
+    public ResponseEntity<ApiResponseDto<Page<PostResponseDto>>> findPostsSortedByModified(
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<PostResponseDto> postResponseDtoList = postService.findPostsSortedByModifiedAt(startDate, endDate, page, size);
-        return ResponseEntity.ok(postResponseDtoList);
+        ApiResponseDtoImpl<Page<PostResponseDto>> response = new ApiResponseDtoImpl<>();
+        response.ok(postService.findPostsSortedByModifiedAt(startDate, endDate, page, size));
+
+        log.info("기간별 게시물 전체 조회 성공");
+        return ResponseEntity.ok(response);
     }
 
-    //feat/post-updateDelete
     // 포스트 업데이트
+    @LoginRequired
     @PatchMapping("/{postId}")
-    public ResponseEntity<PostResponseDto> updatePostImageAndContents(
+    public ResponseEntity<ApiResponseDto<PostResponseDto>> updatePostImageAndContents(
             @PathVariable Long postId,
             @Valid @RequestBody PostRequestDto dto,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
-        PostResponseDto postResponseDto = postService.updatePostImageAndContents(postId, session.getId(), dto);
-        return ResponseEntity.ok(postResponseDto);
+
+        ApiResponseDtoImpl<PostResponseDto> response = new ApiResponseDtoImpl<>();
+        response.ok(postService.updatePostImageAndContents(postId, session.getId(), dto));
+
+        log.info("게시물 수정 성공");
+        return ResponseEntity.ok(response);
     }
 
     // 게시물 삭제
     @LoginRequired
     @DeleteMapping("/{postId}")
-    public void deletePost(
+    public ResponseEntity<ApiResponseDto<Void>> deletePost(
             @PathVariable Long postId,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         postService.deletePost(postId, session.getId());
+
+        ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
+        response.ok(null);
+
+        log.info("게시물 삭제 성공");
+        return ResponseEntity.ok(response);
     }
 }

@@ -2,12 +2,13 @@ package com.example.newsfeed.member.controller;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.request.MemberRequestDto;
-import com.example.newsfeed.member.dto.response.MemberResponseDto;
-import com.example.newsfeed.member.dto.request.MemberDeleteRequestDto;
-import com.example.newsfeed.member.dto.response.MemberUpdateProfileResponseDto;
-import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
-import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
+import com.example.newsfeed.member.dto.MemberRequestDto;
+import com.example.newsfeed.member.dto.MemberResponseDto;
+import com.example.newsfeed.member.dto.deleteRequestDto;
+import com.example.newsfeed.member.dto.findmemberdto.*;
+import com.example.newsfeed.member.dto.updatePasswordRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
+import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -74,4 +75,34 @@ public class MemberController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+    /*
+    feat/member-read 브랜치
+    다른사람의 멤버프로필을 조회하는 메서드
+     */
+    @GetMapping("/{memberId}")
+    public ResponseEntity<FindMemberDto> findMemberById(@PathVariable Long memberId)
+    {
+        FindMemberDto findMemberDto = memberService.findMemberById(memberId);
+
+        return new ResponseEntity<>(findMemberDto, HttpStatus.OK);
+    }
+
+
+    /*
+    feat/member-read 브랜치
+    본인의 멤버프로필을 조회하는 메서드
+    현재 로그인한 http세션을 서비스단에 전달한다
+     */
+    @LoginRequired // 로그인을 안하면 LoginIntercepter.java 클래스를 통해 예외 발생 throw new RuntimeException("로그인 필요")
+    @GetMapping
+    public ResponseEntity<FindMyMemberDto> findMyMember(@SessionAttribute(name ="member") SessionMemberDto currSession)
+    {
+        FindMyMemberDto findMyMemberDto = memberService.findMyMember(currSession);
+
+        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK); // status 200
+    }
+
+
 }

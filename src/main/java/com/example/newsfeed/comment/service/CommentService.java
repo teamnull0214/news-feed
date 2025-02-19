@@ -36,7 +36,7 @@ public class CommentService {
 
     // 댓글 생성
     @Transactional
-    public CommentCreateResponseDto createComment(SessionMemberDto session,Long postId, CommentCreateRequestDto requestDto) {
+    public CommentCreateResponseDto createComment(SessionMemberDto session, Long postId, CommentCreateRequestDto requestDto) {
         // 댓글을 다는 게시물 찾기
         Post post = postService.findPostByIdOrElseThrow(postId);
         // 로그인 본인 맞는경우 댓글 작성 가능
@@ -54,6 +54,7 @@ public class CommentService {
                 comment.getModifiedAt()
         );
     }
+
     // 댓글수정
     @Transactional
     public CommentUpdateResponseDto updateComment(SessionMemberDto session, Long postId, Long commentId, CommentUpdateRequestDto requestDto) {
@@ -61,7 +62,7 @@ public class CommentService {
         // 댓글을 단 게시물 찾기
         Post post = postService.findPostByIdOrElseThrow(postId);
 
-        if(!comment.getMember().getId().equals(session.getId())){
+        if (!comment.getMember().getId().equals(session.getId())) {
             throw new RuntimeException("본인이 작성한 댓글만 수정할 수 있습니다.");
         }
 
@@ -94,15 +95,30 @@ public class CommentService {
                         comment.getModifiedAt()
                 )).collect(Collectors.toList());
     }
+
     // 해당 댓글 삭제
     @Transactional
     public void deleteComment(SessionMemberDto session, Long postId, Long commentId) {
         Comment comment = findCommentByIdOrElseThrow(commentId);
 
-        if(!comment.getMember().getId().equals(postId)){
+        if (!comment.getMember().getId().equals(postId)) {
             throw new RuntimeException("본인이 작성한 댓글만 삭제할 수 있습니다.");
         }
         commentRepository.delete(comment);
+    }
+
+    // 댓글 페이징
+    @Transactional(readOnly = true)
+    public Page<CommentResponseDto> findCommentsOnPost(Long postId, int page, int size) {
+
+        long count = commentRepository.count();
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<CommentResponseDto> dtoList = comments.stream()
+                .map(comment -> CommentResponseDto.fromComment(comment)).toList();
+        return new PageImpl<>(dtoList, pageable, count);
     }
 
     public Comment findCommentByIdOrElseThrow(Long commentId) {
@@ -111,18 +127,5 @@ public class CommentService {
         );
     }
 
-    // 댓글 페이징
-    @Transactional(readOnly = true)
-    public Page<CommentResponseDto> findAllPage(Long postId, int page, int size) {
-
-        long count = commentRepository.count();
-
-        int adjustedPage = (page > 0) ? page - 1 : 0;
-        PageRequest pageable = PageRequest.of(adjustedPage,size, Sort.by("modifiedAt").descending());
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        List<CommentResponseDto> dtoList = comments.stream()
-                .map(comment -> CommentResponseDto.fromComment(comment)).toList();
-        return new PageImpl<>(dtoList, pageable, count);
-    }
 
 }

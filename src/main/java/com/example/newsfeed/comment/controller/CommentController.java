@@ -67,12 +67,12 @@ public class CommentController {
 
     // 댓글 페이징 구현
     @GetMapping("/posts/{postId}/page")
-    public ResponseEntity<Page<CommentResponseDto>> findAllPage(
+    public ResponseEntity<Page<CommentResponseDto>> findCommentsOnPost(
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        Page<CommentResponseDto> result = commentService.findAllPage(postId, page, size);
+        Page<CommentResponseDto> result = commentService.findCommentsOnPost(postId, page, size);
         return ResponseEntity.ok(result);
 
     }

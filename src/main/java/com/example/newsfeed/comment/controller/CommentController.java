@@ -8,6 +8,8 @@ import com.example.newsfeed.comment.dto.updatedto.CommentUpdateResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
+import com.example.newsfeed.global.exception.ApiResponseDto;
+import com.example.newsfeed.global.exception.ApiResponseDtoImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +27,15 @@ public class CommentController {
     // 댓글 생성
     @LoginRequired
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentCreateResponseDto> createComment(
+    public ResponseEntity<ApiResponseDto<?>> createComment(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @PathVariable Long postId,
             @RequestBody CommentCreateRequestDto requestDto
     ){
-        return ResponseEntity.ok(commentService.createComment(session,postId, requestDto));
+        CommentCreateResponseDto comment = commentService.createComment(session, postId, requestDto);
+        ApiResponseDtoImpl<Object> ApiResponseDto = new ApiResponseDtoImpl<>();
+        ApiResponseDto.ok(comment);
+        return ResponseEntity.ok(ApiResponseDto);
     }
 
     // 댓글 조회

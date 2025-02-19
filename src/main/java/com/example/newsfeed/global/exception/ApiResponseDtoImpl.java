@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponseDto<T> implements ApiResponseDto<T> {
+public class ApiResponseDtoImpl<T> implements ApiResponseDto<T> {
 
     private Integer statusCode;
 
@@ -15,12 +15,13 @@ public class ErrorResponseDto<T> implements ApiResponseDto<T> {
     private T data;
 
     @Override
-    public void ok(HttpStatus statusCode, T data) {
-
+    public void ok(T data) {
+        this.statusCode = HttpStatus.OK.value();
+        this.data = data;
     }
 
     @Override
-    public void validationFalied(HttpStatus statusCode, T message) {
+    public void validationFailed(HttpStatus statusCode, T message) {
         this.statusCode = statusCode.value();
         this.message = message;
     }

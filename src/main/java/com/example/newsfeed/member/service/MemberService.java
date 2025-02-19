@@ -1,29 +1,29 @@
 package com.example.newsfeed.member.service;
 
+import com.example.newsfeed.comment.dto.CommentResponseDto;
+import com.example.newsfeed.follow.repository.FollowRepository;
+import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.entity.SessionMemberDto;
 import com.example.newsfeed.member.dto.request.MemberRequestDto;
+import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import com.example.newsfeed.member.dto.response.MemberResponseDto;
-import com.example.newsfeed.member.dto.response.MemberUpdateProfileResponseDto;
+import com.example.newsfeed.member.dto.response.MemberMyGetResponseDto;
 import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
-import com.example.newsfeed.member.dto.MemberResponseDto;
-import com.example.newsfeed.member.dto.findmemberdto.*;
-import com.example.newsfeed.member.dto.updatePasswordRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -32,6 +32,8 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FollowService followService;
+    private final FollowRepository followRepository;
 
     public Member loginMember(String email, String password) {
 
@@ -69,8 +71,34 @@ public class MemberService {
         return MemberResponseDto.toDto(member);
     }
 
+    /* 세션 본인 정보 조회 */
+    public MemberMyGetResponseDto findMyMember(SessionMemberDto session){
+        Member member = findActiveMemberByIdOrElseThrow(session.getId());
+        return MemberMyGetResponseDto.toDto(member);
+    }
+
+    /* 상세한 타인 정보 조회 */
+    public MemberGetResponseDto findMemberById(Long memberId){
+        Member member = findActiveMemberByIdOrElseThrow(memberId);
+        return MemberGetResponseDto.toDto(member);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MemberListGetResponseDto> findAllMemberPage(int page, int size) {
+
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+
+        PageRequest pageable = PageRequest.of(adjustedPage,size, Sort.by("modifiedAt").descending());
+        List<Member> memberList = memberRepository.findActiveMemberAll();
+        List<MemberListGetResponseDto> responseDtoList = memberList.stream()
+                .map(member -> MemberListGetResponseDto.toDto(member, followRepository.countByFollowingMemberId(member.getId())))
+                .toList();
+        return new PageImpl<>(responseDtoList, pageable, memberList.size());
+    }
+
+
     @Transactional
-    public MemberUpdateProfileResponseDto profileUpdate(SessionMemberDto session, MemberUpdateProfileRequestDto dto) {
+    public MemberMyGetResponseDto updateMemberProfile(SessionMemberDto session, MemberUpdateProfileRequestDto dto) {
 
         Member member = findActiveMemberByIdOrElseThrow(session.getId());
 
@@ -88,11 +116,11 @@ public class MemberService {
         }
 
         log.info("프로필 수정 성공");
-        return MemberUpdateProfileResponseDto.toDto(member);
+        return MemberMyGetResponseDto.toDto(member);
     }
 
     @Transactional
-    public void updatePassword(SessionMemberDto session, MemberUpdatePasswordRequestDto dto) {
+    public void updateMemberPassword(SessionMemberDto session, MemberUpdatePasswordRequestDto dto) {
 
         Member findMember = findActiveMemberByEmailOrElseThrow(session.getEmail());
 
@@ -135,67 +163,5 @@ public class MemberService {
         return memberRepository.findActiveMemberById(id).orElseThrow(() ->
                 new RuntimeException("탈퇴하지 않은 유저들 중에 찾아지는 id 유저가 없음"));
     }
-
-    /*
-    feat/member-read
-    멤버 id로 멤버(최종 사용자) 프로필 조회
-     */
-    public FindMemberDto findMemberById(Long memberId){
-
-        // 람다식으로 깔끔하게 예외처리와 sql조회를 동시에~~ made by queenriwon
-        Member member = memberRepository.findActiveMemberById(memberId).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 memberId값을 갖는 유저는 탈퇴했거나 존재하지 않습니다."));
-
-        // 지우긴 싫어서 주석으로 남기는대 지우고 싶으면 지우십쇼zzzz 아래 코드들이 람다식으로 다 쓸모가 없어져 부렸으
-        //Optional<Member> optionalMember = memberRepository.findActiveMemberById(memberId);
-
-        /* 멤버 조회에 실패한 경우
-         memberRepository.findActiveMemberById(memberId);에서
-         MemberRepository.java는 interface라 해당 구역에서 예외처리를 할 수가 없다 (정말사실인지 따져봐야됨)
-         따라서 현 위치인 if문에서 예외처리를 해준다
-        */
-
-        //if(optionalMember.isEmpty()){
-            /*
-             DB에서 조회하고자 하는 memberId 튜플의 isDelete 애트리뷰트가 true인 경우 MemberRepository.java의
-             findActiveMemberByEmail 메서드는 null 값을 optionalMember에 return 할것이다.
-             그 다음 인스턴스인 optaionalMember를 여기 if문에서 isEmpty()메서드로 optionalMember == null 인지 체크 한다
-             */
-            // status 404 Not Found 예외
-            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 memberId값을 갖는 유저는 탈퇴했거나 존재하지 않습니다.");
-        //}
-
-
-        /* 멤버 조회에 성공한 경우 (일반적인 상황)
-        Member 인스턴스를 생성후 new연산자로 생성된 FindMemberDto에 @Getter를 이용하여
-        데이터를 저장하고 caller인 MemberController에 FindMemberDto의 reference를 return한다
-        */
-        //Member findMember = member;
-        return new FindMemberDto(member.getId(), member.getNickname(), member.getEmail(), member.getInfo(), member.getMbti(), member.getCreatedAt());
-
-    }
-
-
-     /*
-       feat/member-read
-       본인 유저 프로필 조회 메서드
-       MemberController.java -> findMyMember 메서드 상단에 @LoginRequired custom annotaion으로 로그인 세션이
-       null이면(즉 로그인을 안한 비회원 상태라면) 해당 기능에 접근을 막아 해당 코드에서 예외처리를 따로 안해도 된다.
-    */
-    public FindMyMemberDto findMyMember(SessionMemberDto currSession){
-
-        // MemberController에서 전달받은 현재 로그인 세션에서 getId()를 통해 DB에서 유저프로필 조회
-        // Member member = memberRepository.findActiveMemberById(memberId).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, memberId + "의 memberId값을 갖는 유저는 탈퇴했거나 존재하지 않습니다."));
-        // 위의 코드를 사용해서 예외처리와 조회를 동시에 할 수도있다
-        Optional<Member> optionalMember = memberRepository.findActiveMemberById(currSession.getId());
-
-        /*
-        MemberController.java -> findMyMember 메서드 상단에 @LoginRequired custom annotaion으로 로그인 세션이
-        null이면(즉 로그인을 안한 비회원 상태라면) 메서드 실행을 막아 현재 이 코드에서 예외처리를 따로 안해도 된다.
-         */
-
-        Member findMyMember = optionalMember.get(); // 내 유저 프로필이니깐 isPresent()로 검사 안해도 상관없다
-        return new FindMyMemberDto(findMyMember.getId(),findMyMember.getUsername(), findMyMember.getNickname(), findMyMember.getEmail(), findMyMember.getInfo(), findMyMember.getMbti(), findMyMember.getCreatedAt(), findMyMember.getModifiedAt());
-    }
-
 
 }

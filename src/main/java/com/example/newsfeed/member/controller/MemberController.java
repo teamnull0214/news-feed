@@ -2,13 +2,13 @@ package com.example.newsfeed.member.controller;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.MemberRequestDto;
-import com.example.newsfeed.member.dto.MemberResponseDto;
-import com.example.newsfeed.member.dto.deleteRequestDto;
-import com.example.newsfeed.member.dto.findmemberdto.*;
-import com.example.newsfeed.member.dto.updatePasswordRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileRequestDto;
-import com.example.newsfeed.member.dto.updatedto.UpdateMemberProfileResponseDto;
+import com.example.newsfeed.member.dto.request.MemberDeleteRequestDto;
+import com.example.newsfeed.member.dto.request.MemberRequestDto;
+import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
+import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
+import com.example.newsfeed.member.dto.response.MemberGetResponseDto;
+import com.example.newsfeed.member.dto.response.MemberResponseDto;
+import com.example.newsfeed.member.dto.response.MemberMyGetResponseDto;
 import com.example.newsfeed.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -36,10 +36,26 @@ public class MemberController {
         return new ResponseEntity<>(memberService.createMember(dto), HttpStatus.CREATED);
     }
 
+    @LoginRequired
+    @GetMapping
+    public ResponseEntity<MemberMyGetResponseDto> findMyMember(
+            @SessionAttribute(name ="member") SessionMemberDto currSession
+    ) {
+        MemberMyGetResponseDto findMyMemberDto = memberService.findMyMember(currSession);
+        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<MemberGetResponseDto> findMemberById(@PathVariable Long memberId)
+    {
+        MemberGetResponseDto memberGetResponseDto = memberService.findMemberById(memberId);
+        return new ResponseEntity<>(memberGetResponseDto, HttpStatus.OK);
+    }
+
     // (본인)유저 프로필 수정
     @LoginRequired
     @PatchMapping("/profile")
-    public ResponseEntity<MemberUpdateProfileResponseDto> profileUpdate(
+    public ResponseEntity<MemberMyGetResponseDto> updateMemberProfile(
             @SessionAttribute(name = "member") SessionMemberDto session,
             @Valid @RequestBody MemberUpdateProfileRequestDto dto,
             HttpServletRequest httpServletRequest
@@ -49,17 +65,17 @@ public class MemberController {
             httpSession.setAttribute("member", session.setNickname(dto.getNickname()));
         }
         log.info("유저 프로필 수정");
-        return ResponseEntity.ok(memberService.profileUpdate(session, dto));
+        return ResponseEntity.ok(memberService.updateMemberProfile(session, dto));
     }
 
     /*유저의 비밀번호 업데이트*/
     @LoginRequired
     @PatchMapping("/password")
-    public ResponseEntity<Void> updatePassword(
+    public ResponseEntity<Void> updateMemberPassword(
             @Valid @RequestBody MemberUpdatePasswordRequestDto dto,
             @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        memberService.updatePassword(session, dto);
+        memberService.updateMemberPassword(session, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -67,42 +83,9 @@ public class MemberController {
     @PostMapping("/delete")
     public ResponseEntity<Void> deleteMember(
             @Valid @RequestBody MemberDeleteRequestDto dto,
-            HttpServletRequest httpServletRequest
+            @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        HttpSession session = httpServletRequest.getSession(false);
-        SessionMemberDto sessionMemberDto = (SessionMemberDto) session.getAttribute("member");
-        memberService.deleteMember(sessionMemberDto, dto.getPassword());
-
+        memberService.deleteMember(session, dto.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-    /*
-    feat/member-read 브랜치
-    다른사람의 멤버프로필을 조회하는 메서드
-     */
-    @GetMapping("/{memberId}")
-    public ResponseEntity<FindMemberDto> findMemberById(@PathVariable Long memberId)
-    {
-        FindMemberDto findMemberDto = memberService.findMemberById(memberId);
-
-        return new ResponseEntity<>(findMemberDto, HttpStatus.OK);
-    }
-
-
-    /*
-    feat/member-read 브랜치
-    본인의 멤버프로필을 조회하는 메서드
-    현재 로그인한 http세션을 서비스단에 전달한다
-     */
-    @LoginRequired // 로그인을 안하면 LoginIntercepter.java 클래스를 통해 예외 발생 throw new RuntimeException("로그인 필요")
-    @GetMapping
-    public ResponseEntity<FindMyMemberDto> findMyMember(@SessionAttribute(name ="member") SessionMemberDto currSession)
-    {
-        FindMyMemberDto findMyMemberDto = memberService.findMyMember(currSession);
-
-        return new ResponseEntity<>(findMyMemberDto, HttpStatus.OK); // status 200
-    }
-
-
 }

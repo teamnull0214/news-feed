@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    long countByFollowingMemberId(Long id);
+    int countByFollowingMemberId(Long id);
 
     @Query("SELECT f FROM Follow f WHERE f.followerMember.id = :followerId AND f.followingMember.id = :followingId")
     Optional<Follow> findByFollowerIdAndFollowingId(

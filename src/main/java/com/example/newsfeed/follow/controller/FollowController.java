@@ -3,7 +3,7 @@ package com.example.newsfeed.follow.controller;
 import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.entity.SessionMemberDto;
-import com.example.newsfeed.member.dto.response.MemberListResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,10 +42,10 @@ public class FollowController {
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<List<MemberListResponseDto>> findAllFollowerMembers(
+    public ResponseEntity<List<MemberListGetResponseDto>> findAllFollowerMembers(
             @SessionAttribute(name = "member") SessionMemberDto session
     ) {
-        List<MemberListResponseDto> responseDtoList = followService.findAllFollowerMembers(session.getId());
+        List<MemberListGetResponseDto> responseDtoList = followService.findAllFollowerMembers(session.getId());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }
 }

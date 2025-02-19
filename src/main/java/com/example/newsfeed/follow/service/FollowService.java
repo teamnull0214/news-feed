@@ -3,7 +3,7 @@ package com.example.newsfeed.follow.service;
 import com.example.newsfeed.follow.entity.Follow;
 import com.example.newsfeed.follow.entity.FollowStatus;
 import com.example.newsfeed.follow.repository.FollowRepository;
-import com.example.newsfeed.member.dto.response.MemberListResponseDto;
+import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import com.example.newsfeed.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,15 +55,15 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<MemberListResponseDto> findAllFollowerMembers(Long id) {
+    public List<MemberListGetResponseDto> findAllFollowerMembers(Long id) {
         List<Follow> followList = followRepository.findByFollowerIdAndStatus(id);
 
         return followList.stream()
                 .map(Follow::getFollowingMember)
                 .filter(member -> !member.isDeleted())
                 .map(member -> {
-                    long followerCount = followRepository.countByFollowingMemberId(member.getId());
-                    return new MemberListResponseDto(member, followerCount);
+                    int followerCount = countByFollowingMemberId(member.getId());
+                    return new MemberListGetResponseDto(member, followerCount);
                 })
                 .collect(Collectors.toList());
     }
@@ -78,5 +78,9 @@ public class FollowService {
         if (followingId.equals(followerId)) {
             throw new RuntimeException("본인을 팔로우/언팔로우 할 수 없다.");
         }
+    }
+
+    public int countByFollowingMemberId(Long memberId) {
+        return followRepository.countByFollowingMemberId(memberId);
     }
 }

@@ -4,6 +4,8 @@ import com.example.newsfeed.follow.service.FollowListService;
 import com.example.newsfeed.follow.service.FollowService;
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.ApiResponseDto;
+import com.example.newsfeed.global.exception.ApiResponseDtoImpl;
 import com.example.newsfeed.member.dto.response.MemberListGetResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,32 +27,45 @@ public class FollowController {
 
     @LoginRequired
     @PostMapping("/{memberId}")
-    public ResponseEntity<Void> createFollow(
+    public ResponseEntity<ApiResponseDto<Void>> createFollow(
             @PathVariable Long memberId,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         followService.createFollow(session.getId(), memberId);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
+        response.ok(null);
+
+        log.info("팔로우 성공");
+        return ResponseEntity.ok(response);
     }
 
     @LoginRequired
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> deleteFollow(
+    public ResponseEntity<ApiResponseDto<Void>> deleteFollow(
             @PathVariable Long memberId,
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session
     ) {
         followService.deleteFollow(session.getId(), memberId);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        ApiResponseDtoImpl<Void> response = new ApiResponseDtoImpl<>();
+        response.ok(null);
+
+        log.info("팔로우 취소 성공");
+        return ResponseEntity.ok(response);
     }
 
     @LoginRequired
     @GetMapping
-    public ResponseEntity<Page<MemberListGetResponseDto>> findAllFollowerMembers(
+    public ResponseEntity<ApiResponseDto<Page<MemberListGetResponseDto>>> findAllFollowerMembers(
             @SessionAttribute(name = LOGIN_MEMBER) SessionMemberDto session,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<MemberListGetResponseDto> responseDtoList = followListService.findAllFollowerMembers(session.getId(), page, size);
-        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
+        ApiResponseDtoImpl<Page<MemberListGetResponseDto>> response = new ApiResponseDtoImpl<>();
+        response.ok(followListService.findAllFollowerMembers(session.getId(), page, size));
+
+        log.info("팔로우 목록 전체 조회");
+        return ResponseEntity.ok(response);
     }
 }

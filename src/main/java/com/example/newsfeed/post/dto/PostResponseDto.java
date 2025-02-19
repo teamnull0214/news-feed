@@ -22,19 +22,6 @@ public class PostResponseDto {
 
 
     /*
-    feat/post-create 브랜치에서 만든 생성자
-    contents가 누락되어 있습니다
-    public PostResponseDto(Long id, String nickname, String image, LocalDateTime createdAt, LocalDateTime modifiedAt){
-        this.id = id;
-        this.nickname = nickname;
-        this.image = image;
-        this.contents = contents;
-        }
-    }
-    */
-
-
-    /*
     feat/post-read 브랜치
     PostResponseDto 생성자
     */

@@ -34,8 +34,8 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findByComment(@PathVariable Long postId){
-        return ResponseEntity.ok(commentService.findByComment(postId));
+    public ResponseEntity<List<CommentResponseDto>> findCommentAllByPostId(@PathVariable Long postId){
+        return ResponseEntity.ok(commentService.findCommentAllByPostId(postId));
     }
 
     // 댓글수정

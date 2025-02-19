@@ -34,6 +34,16 @@ public class CommentService {
         return CommentResponseDto.toDto(comment, session);
     }
 
+    // 댓글 조회
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> findCommentAllByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        return comments.stream()
+                .map(CommentResponseDto::toDto)
+                .collect(Collectors.toList());
+    }
+
     // 댓글수정
     @Transactional
     public CommentResponseDto updateComment(SessionMemberDto session, Long commentId, CommentRequestDto requestDto) {
@@ -45,16 +55,6 @@ public class CommentService {
 
         comment.updateComment(requestDto.getCommentContents());
         return CommentResponseDto.toDto(comment, session);
-    }
-
-    // 댓글 조회
-    @Transactional(readOnly = true)
-    public List<CommentResponseDto> findByComment(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
-
-        return comments.stream()
-                .map(CommentResponseDto::toDto)
-                .collect(Collectors.toList());
     }
 
     // 해당 댓글 삭제

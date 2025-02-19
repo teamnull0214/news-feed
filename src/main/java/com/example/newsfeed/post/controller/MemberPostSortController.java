@@ -4,12 +4,15 @@ import com.example.newsfeed.post.dto.PostResponseDto;
 import com.example.newsfeed.post.service.MemberPostSortService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
+
+import static com.example.newsfeed.global.constant.EntityConstants.CREATED_AT;
+import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
 
 @Slf4j
 @RestController
@@ -19,39 +22,41 @@ public class MemberPostSortController {
 
     private final MemberPostSortService memberPostSortService;
 
-    /*todo: 각 조회마다 페이지네이션 적용하기*/
     /*유저 한명의 전체 게시글 조회 (수정일자 기준 최신순)*/
     @GetMapping("/sorted-by-modified")
-    public ResponseEntity<List<PostResponseDto>> findPostsSortedByModifiedAt(
+    public ResponseEntity<Page<PostResponseDto>> findPostsSortedByModifiedAt(
             @PathVariable Long memberId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
-
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponseDto> postResponseDtoList = memberPostSortService.findPostsSortedByModified(memberId,startDate, endDate);
-        return ResponseEntity.ok(postResponseDtoList);
+        Page<PostResponseDto> dtoPage = memberPostSortService.findPostsSorted(memberId, startDate, endDate, page, size, MODIFIED_AT, false);
+        return ResponseEntity.ok(dtoPage);
     }
 
     /*유저 한명의 전체 게시글 조회 (등록일자 기준 최신순)*/
     @GetMapping("/sorted-by-created")
-    public ResponseEntity<List<PostResponseDto>> findPostsSortedByCreatedAt(
+    public ResponseEntity<Page<PostResponseDto>> findPostsSortedByCreatedAt(
             @PathVariable Long memberId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponseDto> postResponseDtoList = memberPostSortService.findPostsSortedByCreatedAt(memberId,startDate, endDate);
-        return ResponseEntity.ok(postResponseDtoList);
+        Page<PostResponseDto> dtoPage = memberPostSortService.findPostsSorted(memberId, startDate, endDate, page, size, CREATED_AT, false);
+        return ResponseEntity.ok(dtoPage);
     }
 
     /* 유저 한명의 전체 게시글 조회 (좋아요 많은 순) */
     @GetMapping("/sorted-by-likes")
-    public ResponseEntity<List<PostResponseDto>> findPostsSortedByLike(
+    public ResponseEntity<Page<PostResponseDto>> findPostsSortedByLike(
             @PathVariable Long memberId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponseDto> postResponseDtoList = memberPostSortService.findPostsSortedByLIKE(memberId,startDate, endDate);
-        return ResponseEntity.ok(postResponseDtoList);
+        Page<PostResponseDto> dtoPage = memberPostSortService.findPostsSorted(memberId, null, null, page, size, null, false);
+        return ResponseEntity.ok(dtoPage);
     }
 }
 

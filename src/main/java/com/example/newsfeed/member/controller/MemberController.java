@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
+import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j
 @RestController

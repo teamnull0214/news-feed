@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -39,7 +41,7 @@ public class CommentService {
     public Page<CommentResponseDto> findCommentsOnPost(Long postId, int page, int size) {
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
         Page<Comment> commentPage = commentRepository.findByPostId(postId, pageable);
 
         List<CommentResponseDto> dtoList = commentPage.getContent().stream()

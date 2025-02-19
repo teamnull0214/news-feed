@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.example.newsfeed.global.constant.EntityConstants.MODIFIED_AT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class FollowListService {
     public Page<MemberListGetResponseDto> findAllFollowerMembers(Long id, int page, int size) {
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("modifiedAt").descending());
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(MODIFIED_AT).descending());
         Page<Follow> followPage = followRepository.findByFollowerIdAndStatus(id, pageable);
 
         List<MemberListGetResponseDto> dtoList = followPage.stream()

@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
+import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
 
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {

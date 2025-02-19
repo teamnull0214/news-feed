@@ -1,8 +1,5 @@
 package com.example.newsfeed.member.service;
 
-import com.example.newsfeed.comment.dto.CommentResponseDto;
-import com.example.newsfeed.comment.entity.Comment;
-import com.example.newsfeed.follow.repository.FollowRepository;
 import com.example.newsfeed.follow.service.FollowListService;
 import com.example.newsfeed.global.config.PasswordEncoder;
 import com.example.newsfeed.global.dto.SessionMemberDto;
@@ -15,6 +12,7 @@ import com.example.newsfeed.member.dto.request.MemberUpdatePasswordRequestDto;
 import com.example.newsfeed.member.dto.request.MemberUpdateProfileRequestDto;
 import com.example.newsfeed.member.entity.Member;
 import com.example.newsfeed.member.repository.MemberRepository;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -24,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.newsfeed.global.constant.EntityConstants.ID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -31,7 +31,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowListService followService;
-    private final FollowRepository followRepository;
 
     public Member loginMember(String email, String password) {
 
@@ -85,11 +84,11 @@ public class MemberService {
     public Page<MemberListGetResponseDto> findAllMemberPage(int page, int size) {
 
         int adjustedPage = (page > 0) ? page - 1 : 0;
-        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("id"));
+        Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by(ID));
         Page<Member> memberPage = memberRepository.findActiveMemberAll(pageable);
 
         List<MemberListGetResponseDto> dtoList = memberPage.getContent().stream()
-                .map(member -> MemberListGetResponseDto.toDto(member, followRepository.countByFollowingMemberId(member.getId())))
+                .map(member -> MemberListGetResponseDto.toDto(member, followService.countByFollowingMemberId(member.getId())))
                 .toList();
 
         return new PageImpl<>(dtoList, pageable, memberPage.getTotalElements());

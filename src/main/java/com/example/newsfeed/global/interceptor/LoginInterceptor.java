@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
+
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
 
@@ -25,10 +27,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         if (isLoginRequired(handlerMethod)) {
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("member") == null) {
+            if (session == null || session.getAttribute(LOGIN_MEMBER) == null) {
                 throw new RuntimeException("로그인 필요");
             }
-            SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute("member");
+            SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute(LOGIN_MEMBER);
             log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",
                     loginMember.getId(),
                     loginMember.getUsername(),

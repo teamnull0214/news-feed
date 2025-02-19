@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.newsfeed.global.constant.SessionConst.LOGIN_MEMBER;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class AuthenticationController {
 
         Member findLoginMember = memberService.loginMember(dto.getEmail(), dto.getPassword());
         if (findLoginMember != null) {
-            httpSession.setAttribute("member", new SessionMemberDto(
+            httpSession.setAttribute(LOGIN_MEMBER, new SessionMemberDto(
                     findLoginMember.getId(),
                     findLoginMember.getUsername(),
                     findLoginMember.getNickname(),

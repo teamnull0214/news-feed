@@ -17,4 +17,11 @@ public class BadRequestException{
             super(errorCode);
         }
     }
+
+    /*잘못된 URL 또는 METHOD가 입력된 경우*/
+    public static class InvalidUrlOrMethodException extends CustomException {
+        public InvalidUrlOrMethodException(ErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

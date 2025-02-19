@@ -1,7 +1,6 @@
 package com.example.newsfeed.global.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 public interface ApiResponseDto<T> {
 

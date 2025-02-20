@@ -1,4 +1,4 @@
-# 📘 기초 프로젝트 - 뉴스피드 프로젝트
+![image](https://github.com/user-attachments/assets/f008fea3-f33e-4f89-a9cf-f55ef5c51003)# 📘 기초 프로젝트 - 뉴스피드 프로젝트
 
   * 게시글 및 댓글 작성, 팔로우 기능, 좋아요 기능이 있는 뉴스피드 서버 프로그램을 개발합니다.
   * JPA를 바탕으로 뉴스피드 앱을 구현하는 과제입니다.
@@ -30,11 +30,11 @@ https://flaxen-swan-41e.notion.site/API-19fb649ebbbd80848818c2ada3e92982
   
 
 * 와이어 프레임
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbzItx7%2FbtsMplQAxAo%2FGQA5qzG0PQyYXbJcarKvMk%2Fimg.png">
+<img src="https://files.slack.com/files-pri/T06B9PCLY1E-F08DYMZK0SJ/image.png">
 
 
 * 유스케이스
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F83nlM%2FbtsMoGgOmAC%2FFANm6T6S08izkwq81okeq1%2Fimg.png">
+<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbzItx7%2FbtsMplQAxAo%2FGQA5qzG0PQyYXbJcarKvMk%2Fimg.png">
 
 <br><br>
 

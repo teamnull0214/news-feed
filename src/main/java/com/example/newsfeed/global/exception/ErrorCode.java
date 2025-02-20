@@ -23,7 +23,8 @@ public enum ErrorCode {
     ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 상태입니다."),
     ALREADY_UNLIKED(HttpStatus.CONFLICT, "이미 좋아요 해제를 한 댓글입니다."),
     CANNOT_LIKE_OWN_ENTITY(HttpStatus.BAD_REQUEST, "본인이 작성한 정보는 좋아요/좋아요 취소를 누를 수 없다."),
-    LIKE_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 기록이 존재하지 않음.");
+    LIKE_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 기록이 존재하지 않음."),
+    URL_OR_METHOD_ERROR(HttpStatus.BAD_REQUEST, "잘못된 url 또는 Http Method입니다.");
 
     private final HttpStatus statusCode;
     private final String message;

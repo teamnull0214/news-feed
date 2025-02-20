@@ -2,6 +2,7 @@ package com.example.newsfeed.global.interceptor;
 
 import com.example.newsfeed.global.annotation.LoginRequired;
 import com.example.newsfeed.global.dto.SessionMemberDto;
+import com.example.newsfeed.global.exception.custom.BadRequestException;
 import com.example.newsfeed.global.exception.custom.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import static com.example.newsfeed.global.exception.ErrorCode.LOGIN_REQUIRED;
 import static com.example.newsfeed.global.constant.EntityConstants.LOGIN_MEMBER;
+import static com.example.newsfeed.global.exception.ErrorCode.URL_OR_METHOD_ERROR;
 
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
@@ -25,23 +27,30 @@ public class LoginInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        /* try-catch 로 수정 */
+        try {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        if (isLoginRequired(handlerMethod)) {
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute(LOGIN_MEMBER) == null) {
-                throw new UnauthorizedException.LoginRequiredException(LOGIN_REQUIRED);
+            if (isLoginRequired(handlerMethod)) {
+                HttpSession session = request.getSession(false);
+                if (session == null || session.getAttribute(LOGIN_MEMBER) == null) {
+                    throw new UnauthorizedException.LoginRequiredException(LOGIN_REQUIRED);
+                }
+                SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute(LOGIN_MEMBER);
+                log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",
+                        loginMember.getId(),
+                        loginMember.getUsername(),
+                        loginMember.getNickname(),
+                        loginMember.getEmail()
+                );
+                return true;
+
             }
-            SessionMemberDto loginMember = (SessionMemberDto) session.getAttribute(LOGIN_MEMBER);
-            log.info("로그인한 사용자(id, userName, nickName, email) = {}, {}, {}, {}",
-                    loginMember.getId(),
-                    loginMember.getUsername(),
-                    loginMember.getNickname(),
-                    loginMember.getEmail()
-            );
             return true;
+
+        } catch (ClassCastException e) {
+            throw new BadRequestException.InvalidUrlOrMethodException(URL_OR_METHOD_ERROR);
         }
-        return true;
     }
 
     private boolean isLoginRequired(HandlerMethod handlerMethod) {

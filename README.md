@@ -4,11 +4,13 @@
   * JPA를 바탕으로 뉴스피드 앱을 구현하는 과제입니다.
   * Postman을 이용한 요청 및 응답으로 일정을 CRUD 및 DB에 저장할 수 있습니다.
 
-* 개발 기간 : 25.02.14 ~ 25.02.20 (7일)
+* 개발기간: 25.02.14 ~ 25.02.20 (7일)
+
+* 시연영상: https://drive.google.com/file/d/1Zmh-Z3T_c-o0ZqIeWGu7huyYV0ZgRKZR/view
  
 * 발표자료: https://www.canva.com/design/DAGffUxgFnU/vDAZVQAcd2H2Xh-ZFEU8Ew/view?utm_content=DAGffUxgFnU&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h7761aaa551
 
-* 개발 환경
+* 개발환경
   * development : IntelliJ IDEA, git, github
   * environment : JAVA JDK 17, Spring Boot 3.4.2, JPA, MySQL, swagger 2.3.0
 
